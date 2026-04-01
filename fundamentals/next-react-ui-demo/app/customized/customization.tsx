@@ -97,7 +97,7 @@ export const darkStyles = {
   transcriptHeader: {
     background: "#1a1a1a",
   },
-  stageChip: {
+  nodeChip: {
     background: "rgba(17, 24, 39, 0.74)",
   },
   transcriptRowUser: {

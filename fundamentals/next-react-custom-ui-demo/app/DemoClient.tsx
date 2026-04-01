@@ -8,7 +8,7 @@
  * 2. `useAkapuluSession` drives lifecycle: idle → connecting (poll progress) → connected → ended/error.
  * 3. While connected, Daily hooks (`useDaily`, `useParticipantIds`, `useVideoTrack`) + `DailyVideo` render
  *    remote/local video; `useAkapuluMediaControls` toggles mic/cam on that same call.
- * 4. Transcripts, stage, and bot speaking state come from the session store; tool events use `useAkapuluEvents`.
+ * 4. Transcripts, node updates, and bot speaking state come from the session store; tool events use `useAkapuluEvents`.
  * 5. `AkapuluBotAudio` plays assistant audio (hidden element).
  */
 
@@ -27,10 +27,10 @@ import { Camera, CameraOff, Database, Eye, Globe, Mic, MicOff, PhoneOff } from "
 import type { NormalizedToolEvent } from "@akapulu/web-core";
 
 // =============================================================================
-// UI theming: flow stage chip colors + tool-event toast chrome
+// UI theming: flow node chip colors + tool-event toast chrome
 // =============================================================================
 
-const STAGE_COLOR_POOL = ["#60a5fa", "#34d399", "#fbbf24", "#a78bfa", "#f87171", "#22d3ee", "#f472b6"];
+const NODE_COLOR_POOL = ["#60a5fa", "#34d399", "#fbbf24", "#a78bfa", "#f87171", "#22d3ee", "#f472b6"];
 
 const TOOL_THEME: Record<string, { border: string; title: string }> = {
   vision: { border: "1px solid rgba(34, 211, 238, 0.45)", title: "#67e8f9" },
@@ -44,12 +44,12 @@ const TOOL_ICON = {
   http: <Globe size={14} />,
 };
 
-function getCycledStageColor(index: number): string {
-  return STAGE_COLOR_POOL[index % STAGE_COLOR_POOL.length] || "#818cf8";
+function getCycledNodeColor(index: number): string {
+  return NODE_COLOR_POOL[index % NODE_COLOR_POOL.length] || "#818cf8";
 }
 
 // =============================================================================
-// VideoTile — one Daily participant (main stage or PiP)
+// VideoTile — one Daily participant (main view or PiP)
 // =============================================================================
 
 type VideoTileProps = {
@@ -111,7 +111,7 @@ function CustomUiConversationDemo() {
     latestUpdateText,
     transcripts,
     botSpeakingState,
-    currentStage,
+    currentNode,
     error,
     start,
     end,
@@ -136,10 +136,10 @@ function CustomUiConversationDemo() {
   const [latestToolEvent, setLatestToolEvent] = useState<NormalizedToolEvent | null>(null);
   const [localStartError, setLocalStartError] = useState<string | null>(null);
   const [dismissedErrorKey, setDismissedErrorKey] = useState<string | null>(null);
-  const [currentStageColor, setCurrentStageColor] = useState("#818cf8");
+  const [currentNodeColor, setCurrentNodeColor] = useState("#818cf8");
 
   const transcriptRef = useRef<HTMLDivElement | null>(null);
-  const stageColorIndexRef = useRef(0);
+  const nodeColorIndexRef = useRef(0);
   const toolToastTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // ---------------------------------------------------------------------------
@@ -154,12 +154,12 @@ function CustomUiConversationDemo() {
   // Effects
   // ---------------------------------------------------------------------------
 
-  // Rotate stage chip color whenever the scenario stage key changes
+  // Rotate node chip color whenever the scenario node key changes
   useEffect(() => {
-    if (!currentStage?.key) return;
-    setCurrentStageColor(getCycledStageColor(stageColorIndexRef.current));
-    stageColorIndexRef.current += 1;
-  }, [currentStage?.key]);
+    if (!currentNode?.key) return;
+    setCurrentNodeColor(getCycledNodeColor(nodeColorIndexRef.current));
+    nodeColorIndexRef.current += 1;
+  }, [currentNode?.key]);
 
   // Auto-hide tool toast after a few seconds
   useEffect(() => {
@@ -420,13 +420,13 @@ function CustomUiConversationDemo() {
             <div className="headlessTranscriptContainer">
               <div className="headlessTranscriptHeader">
                 <h3>Transcript</h3>
-                {currentStage?.label ? (
+                {currentNode?.label ? (
                   <div
-                    className="headlessStageChip"
-                    style={{ borderColor: currentStageColor, color: currentStageColor }}
+                    className="headlessNodeChip"
+                    style={{ borderColor: currentNodeColor, color: currentNodeColor }}
                   >
-                    <span className="headlessStageDot" style={{ background: currentStageColor }} />
-                    {currentStage.label}
+                    <span className="headlessNodeDot" style={{ background: currentNodeColor }} />
+                    {currentNode.label}
                   </div>
                 ) : null}
               </div>

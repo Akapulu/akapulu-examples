@@ -258,7 +258,7 @@ body {
   margin-right: 0.5rem;
 }
 
-.headlessStageChip {
+.headlessNodeChip {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
@@ -270,7 +270,7 @@ body {
   font-weight: 700;
 }
 
-.headlessStageDot {
+.headlessNodeDot {
   width: 6px;
   height: 6px;
   border-radius: 999px;

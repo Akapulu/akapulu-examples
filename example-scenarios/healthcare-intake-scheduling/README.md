@@ -236,7 +236,7 @@ At a high level, the flow for attaching a RAG tool is:
 1) You create a knowledge base in Akapulu.
 2) You add one or more documents to that knowledge base.
 3) Akapulu indexes those documents into retrievable chunks.
-4) In your scenario builder, open the node where you want knowledge-backed answers, add a **RAG tool**, and select your knowledge base for that tool (or via JSON, add a function with `type: "rag"` and set `corpus_id` to your knowledge base ID).
+4) In your scenario builder, open the node where you want knowledge-backed answers, add a **RAG tool**, and select your knowledge base for that tool (or via JSON, add a function with `type: "rag"` and set `knowledge_base_id` to your knowledge base ID).
 5) During the conversation, when the flow enters that node, the assistant can call the RAG tool to query that knowledge base before it responds.
 
 This lets the assistant answer domain-specific questions using your own content, instead of relying only on general model knowledge.
@@ -394,7 +394,7 @@ Replace every placeholder ID in this JSON with your actual IDs from the endpoint
           "function": {
             "name": "about_our_clinic",
             "type": "rag",
-            "corpus_id": "<YOUR_RAG_CORPUS_ID>",
+            "knowledge_base_id": "<YOUR_KNOWLEDGE_BASE_ID>",
             "description": "a RAG tool with information about our clinic"
           }
         }

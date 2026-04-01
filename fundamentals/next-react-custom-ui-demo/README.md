@@ -52,4 +52,4 @@ Open:
 
 - `http://localhost:3000`
 
-You should see the custom call surface with a **Start call** button. Click it to enter `connecting` with spinner/progress, then transition to the connected custom layout with video tiles, mic/cam/end controls, transcript, stage chip, and tool toasts.
+You should see the custom call surface with a **Start call** button. Click it to enter `connecting` with spinner/progress, then transition to the connected custom layout with video tiles, mic/cam/end controls, transcript, node chip, and tool toasts.

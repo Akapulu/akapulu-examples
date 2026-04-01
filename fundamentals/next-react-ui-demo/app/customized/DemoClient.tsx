@@ -30,8 +30,8 @@ function ConversationEventLogger() {
       return;
     }
 
-    if (event.type === "stage_changed") {
-      console.log("[customized-demo][stage_changed]", { stage: event.stage });
+    if (event.type === "node_changed") {
+      console.log("[customized-demo][node_changed]", { node: event.node });
       return;
     }
 
