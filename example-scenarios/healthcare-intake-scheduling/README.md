@@ -13,7 +13,6 @@ The scenario is structured around the following node sequence:
 - `data_intake`
   - Collects core patient details (name, age, reason for visit, symptoms/concerns).
   - Uses a `vision` tool when the patient asks the assistant to look at something on camera.
-  - Runs `pre_actions` on node entry and `post_actions` after the bot completes its first utterance in the node, both using `http` tools for intake lifecycle tracking.
 - `appointment_booking`
   - Collects preferred date/time and visit type (in-person vs virtual).
   - Uses an `http` tool to submit the appointment booking request.
@@ -42,12 +41,10 @@ In endpoint templates, use variables as follows:
 
 - `{{runtime.*}}` - runtime variables you pass into the [connect endpoint](https://docs.akapulu.com/api-reference/conversations/connect) when starting the conversation (headers or body)
 - `{{secret.*}}` - secrets configured in [akapulu.com/secrets](https://akapulu.com/secrets) (can be used in endpoint headers only)
-- `{{llm.*}}` - values the model extracts/fills at call time (headers or body for function tools)
+- `{{llm.*}}` - values the model extracts or fills at call time for function tools
 
 For `{{llm.*}}` variables, include a short description after a colon that clearly tells the model what value it should populate in that field.  
 Example: `{{llm.date:Appointment date in YYYY-MM-DD}}`
-
-Note: `pre_actions` and `post_actions` are triggered automatically by node entry(pre actions before the bot speaks, and post actions after the bot speaks) not by LLM tool calling. Because of that, do not use `{{llm.*}}` variables in pre-action or post-action endpoints.
 
 ## Local endpoint server for this demo
 
@@ -60,10 +57,8 @@ Endpoints need to be hosted at public HTTP URLs that can receive incoming reques
 
 For this example, we use a lightweight local Flask server in `Flask Server/flask-server.py`.
 
-This demo Flask server provides three routes that match the scenario flow:
+This demo Flask server provides a booking route that matches the current scenario flow:
 
-- `POST /actions/pre` - receives the `data_intake` pre-action payload, prints request inputs, and returns a success response.
-- `POST /actions/post` - receives the `data_intake` post-action payload, prints request inputs, and returns a success response.
 - `POST /book-appointment` - receives booking details, prints request inputs, and returns a mock `appointment_confirmation_id`.
 
 Run the Flask server:
@@ -71,7 +66,7 @@ Run the Flask server:
 0) Clone the examples repo and move into this scenario folder.
 
 ```bash
-git clone https://github.com/Akapulu/akapulu-examples.git && cd akapulu-examples/examples/example-scenarios/healthcare-intake-scheduling
+git clone https://github.com/Akapulu/akapulu-examples.git && cd akapulu-examples/example-scenarios/healthcare-intake-scheduling
 ```
 
 1) Create and activate a virtual environment, then install Flask.
@@ -131,71 +126,9 @@ This starts an ngrok public endpoint and securely forwards incoming requests to 
 
 ## Creating endpoints
 
-This scenario uses three HTTP endpoints: one for `pre_actions`, one for `post_actions`, and one for appointment booking.
+This scenario uses one HTTP endpoint for appointment booking.
 
-> Important: endpoints used as actions (`pre_actions` and `post_actions`) cannot use LLM variables.
-
-### 1) Create the pre-action endpoint
-
-Create an endpoint that runs as a pre action for the `data_intake` node.
-
-This will run right when the flow enters the data_intake node, before the Bot has spoken its first utterance.
-
-Go to [akapulu.com/endpoints](https://akapulu.com/endpoints), click **Create Endpoint**, then enter:
-
-- **Setup tab**
-  - `name`: `Patient Intake Pre Action`
-  - `url`: `https://<YOUR_NGROK_DOMAIN>/actions/pre`
-  - `method`: `POST`
-- **Headers/Body tab**
-  - `headers`:
-```json
-{
-  "Content-Type": "application/json",
-  "Authorization": "Bearer {{secret.webhook_token}}"
-}
-```
-
-  - `body`:
-```json
-{
-  "event": "node_entered",
-  "source": "patient_intake_screening",
-  "patient_id": "{{runtime.patient_id}}"
-}
-```
-
-### 2) Create the post-action endpoint
-
-Create an endpoint that runs as a post action for the `data_intake` node.
-
-This will run after the Bot has spoken its first utterance in the data_intake node
-
-Go to [akapulu.com/endpoints](https://akapulu.com/endpoints), click **Create Endpoint**, then enter:
-
-- **Setup tab**
-  - `name`: `Patient Intake Post Action`
-  - `url`: `https://<YOUR_NGROK_DOMAIN>/actions/post`
-  - `method`: `POST`
-- **Headers/Body tab**
-  - `headers`:
-```json
-{
-  "Content-Type": "application/json",
-  "Authorization": "Bearer {{secret.webhook_token}}"
-}
-```
-  - `body`:
-```json
-{
-  "event": "bot_spoken",
-  "source": "patient_intake_screening",
-  "patient_id": "{{runtime.patient_id}}"
-}
-```
-
-
-### 3) Create the appointment booking endpoint
+### Create the appointment booking endpoint
 
 Create an endpoint that runs as the booking action for the `appointment_booking` node.
 
@@ -270,8 +203,6 @@ We have provided an example knowledge base file for this setup: `Clinic-Details.
 
 Before creating the scenario, copy these IDs:
 
-- Endpoint ID for `Patient Intake Pre Action`
-- Endpoint ID for `Patient Intake Post Action`
 - Endpoint ID for `Patient Intake Book Appointment`
 - Knowledge base ID for `Healthcare Intake Demo Knowledge Base`
 - (optionally) Avatar ID (UUID) for the avatar you want to use
@@ -295,141 +226,74 @@ Replace every placeholder ID in this JSON with your actual IDs from the endpoint
 
 ```json
 {
+  "role_instruction": "You are a friendly and professional medical screening assistant. Your responses will be converted to audio, so keep them concise and avoid special characters. Speak clearly and warmly to help patients feel comfortable. Do not start sentences with short bursts like sure! or absolutely! since short bursts lead to choppy audio.",
   "nodes": {
     "intro": {
       "functions": [
         {
-          "function": {
-            "name": "transition_to_data_intake",
-            "type": "transition",
-            "description": "Use this function to transition to the data_intake phase after they have given consent to proceed.",
-            "transition_to": "data_intake"
-          }
+          "name": "transition_to_data_intake",
+          "type": "transition",
+          "description": "Use this function to transition to the data_intake phase after they have given consent to proceed.",
+          "transition_to": "data_intake"
         }
       ],
-      "pre_actions": [],
-      "role_messages": [
-        {
-          "role": "system",
-          "content": "You are a friendly and professional medical screening assistant. Your responses will be converted to audio, so keep them concise and avoid special characters. Speak clearly and warmly to help patients feel comfortable. Do not start sentences with short bursts like sure! or absolutely! since short bursts lead to choppy audio."
-        }
-      ],
-      "task_messages": [
-        {
-          "role": "system",
-          "content": "Greet the patient warmly and introduce yourself as a medical screening assistant. Explain that you'll help them with a brief screening questionnaire. After they have given consent to move to next stage, use the transition tool to move forward to the data intake phase."
-        }
-      ],
-      "respond_immediately": true
+      "task_instruction": "Greet the patient warmly and introduce yourself as a medical screening assistant. Explain that you'll help them with a brief screening questionnaire. After they have given consent to move to next stage, use the transition tool to move forward to the data intake phase."
     },
     "data_intake": {
       "functions": [
         {
-          "function": {
-            "name": "transition_to_appointment_booking",
-            "type": "transition",
-            "description": "Transition to the appointment booking phase.",
-            "transition_to": "appointment_booking"
-          }
+          "name": "transition_to_appointment_booking",
+          "type": "transition",
+          "description": "Transition to the appointment booking phase.",
+          "transition_to": "appointment_booking"
         },
         {
-          "function": {
-            "name": "VIEW_CAMERA",
-            "type": "vision",
-            "description": "Use this tool when the user asks you to look at the screen"
-          }
+          "name": "VIEW_CAMERA",
+          "type": "vision",
+          "description": "Use this tool when the user asks you to look at the screen"
         }
       ],
-      "pre_actions": [
-        {
-          "type": "http",
-          "endpoint_id": "<YOUR_PRE_ACTION_ENDPOINT_ID>"
-        }
-      ],
-      "post_actions": [
-        {
-          "type": "http",
-          "endpoint_id": "<YOUR_POST_ACTION_ENDPOINT_ID>"
-        }
-      ],
-      "task_messages": [
-        {
-          "role": "system",
-          "content": "Collect the patient's basic information. Ask for their full name, age, primary reason for visit, and any current symptoms or concerns. Be conversational and ask one question at a time. If the patient indicates they are showing something on camera (for example: this part of my hand hurts, can you see this rash, what does this look like), call the vision tool. When you've gathered enough information, use the transition tool to move to appointment booking. If the patient asks questions, politely redirect them to answer the screening questions first, and mention they can ask questions later in the Q&A phase."
-        }
-      ],
-      "respond_immediately": true
+      "task_instruction": "Collect the patient's basic information. Ask for their full name, age, primary reason for visit, and any current symptoms or concerns. Be conversational and ask one question at a time. If the patient indicates they are showing something on camera (for example: this part of my hand hurts, can you see this rash, what does this look like), call the vision tool. When you've gathered enough information, use the transition tool to move to appointment booking. If the patient asks questions, politely redirect them to answer the screening questions first, and mention they can ask questions later in the Q&A phase."
     },
     "appointment_booking": {
       "functions": [
         {
-          "function": {
-            "name": "book_appointment",
-            "type": "http",
-            "description": "Call this tool to book the appointment",
-            "endpoint_id": "<YOUR_BOOK_APPOINTMENT_ENDPOINT_ID>",
-            "transition_to": "qa"
-          }
+          "name": "book_appointment",
+          "type": "http",
+          "description": "Call this tool to book the appointment",
+          "endpoint_id": "<YOUR_BOOK_APPOINTMENT_ENDPOINT_ID>",
+          "transition_to": "qa"
         }
       ],
-      "task_messages": [
-        {
-          "role": "system",
-          "content": "Help the patient schedule an appointment. Ask about their preferred date and time, and whether they prefer in-person or virtual consultation. Be flexible and accommodating. When you've collected the appointment details (date, time, and appointment type), use the HTTP booking tool.\n\nNote - today is {{runtime.today}}"
-        }
-      ],
-      "respond_immediately": true
+      "task_instruction": "Help the patient schedule an appointment. Ask about their preferred date and time, and whether they prefer in-person or virtual consultation. Be flexible and accommodating. When you've collected the appointment details (date, time, and appointment type), use the HTTP booking tool.\n\nNote - today is {{runtime.today}}"
     },
     "qa": {
       "functions": [
         {
-          "function": {
-            "name": "transition_to_end_screening",
-            "type": "transition",
-            "description": "Transition to the end of the screening session.",
-            "transition_to": "end"
-          }
+          "name": "transition_to_end_screening",
+          "type": "transition",
+          "description": "Transition to the end of the screening session.",
+          "transition_to": "end"
         },
         {
-          "function": {
-            "name": "about_our_clinic",
-            "type": "rag",
-            "knowledge_base_id": "<YOUR_KNOWLEDGE_BASE_ID>",
-            "description": "a RAG tool with information about our clinic"
-          }
+          "name": "about_our_clinic",
+          "type": "rag",
+          "knowledge_base_id": "<YOUR_KNOWLEDGE_BASE_ID>",
+          "description": "a RAG tool with information about our clinic"
         }
       ],
-      "task_messages": [
-        {
-          "role": "system",
-          "content": "Answer the patient's questions about the screening process, our clinic, or anything else they want to know. Be helpful, empathetic, and professional. If you don't know something, suggest they discuss it with their doctor during the appointment. Keep responses concise since they'll be converted to audio. Use the transition tool to end the screening session when the patient is ready to conclude. If they have a question about our clinic use the about_our_clinic rag tool"
-        }
-      ],
-      "respond_immediately": true
+      "task_instruction": "Answer the patient's questions about the screening process, our clinic, or anything else they want to know. Be helpful, empathetic, and professional. If you don't know something, suggest they discuss it with their doctor during the appointment. Keep responses concise since they'll be converted to audio. Use the transition tool to end the screening session when the patient is ready to conclude. If they have a question about our clinic use the about_our_clinic rag tool"
     },
     "end": {
-      "functions": [],
-      "post_actions": [
-        {
-          "type": "end_conversation"
-        }
-      ],
-      "task_messages": [
-        {
-          "role": "system",
-          "content": "Thank the patient for completing the screening. Provide a brief summary of next steps (e.g., 'We'll review your information and confirm your appointment details. A member of our team will contact you soon.'). Keep it brief and friendly, then end the conversation."
-        }
-      ],
-      "respond_immediately": true
+      "task_instruction": "Thank the patient for completing the screening. Provide a brief summary of next steps (e.g., 'We'll review your information and confirm your appointment details. A member of our team will contact you soon.'). Keep it brief and friendly, then end the conversation.",
+      "end_after_bot_response": true
     }
   },
   "initial_node": "intro"
 }
 ```
 
-After you paste the JSON, click **Save**. In the **Nodes** tab, switch the toggle to **Visual**. You should see a node flow like this:
-
-![Saved nodes in Visual mode](./media/final_nodes_ui.png)
+After you paste the JSON, click **Save**. Use the toggle in the top-right corner of the scenario editor to switch between JSON mode and visual mode.
 
 ## Use in UI
 
@@ -453,7 +317,6 @@ return await akapulu.connectConversation({
     patient_id: "patient_001",
     today: new Date().toISOString().slice(0, 10),
   },
-  voice_only_mode: false,
   record_conversation: true,
 });
 ```

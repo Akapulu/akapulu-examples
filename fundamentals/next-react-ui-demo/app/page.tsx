@@ -65,7 +65,7 @@ export default function HomePage() {
               </Link>
             </div>
             <p style={{ margin: 0, color: "#475569", lineHeight: 1.45 }}>
-              React UI example with customization hooks, style overrides, and a custom connect payload flow.
+              React UI example with customization hooks, style overrides, and custom rendering behavior.
             </p>
           </div>
         </div>

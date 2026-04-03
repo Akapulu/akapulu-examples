@@ -3,7 +3,7 @@ import { AkapuluApiError, createAkapuluServerClient } from "@akapulu/server";
 /**
  * Browser → this route → Akapulu `connectConversation`.
  *
- * Default `react-ui` demo (`/` or `/default`). `AkapuluProvider` POSTs here with no JSON body;
+ * Default `react-ui` demo (`/default`). `AkapuluProvider` POSTs here with no JSON body;
  * this handler sends an empty `runtime_vars` object by default. API key / base URL come from env.
  */
 

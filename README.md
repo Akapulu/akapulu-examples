@@ -13,7 +13,7 @@ This repository is organized into two top-level sections:
 - `example-scenarios`
   - Scenario-focused end-to-end examples.
   - Includes:
-    - `patient-intake-screening`
+    - `healthcare-intake-scheduling`
 
 ## Repository structure
 
@@ -24,5 +24,5 @@ akapulu-examples/
     next-react-ui-demo/
     next-react-custom-ui-demo/
   example-scenarios/
-    patient-intake-screening/
+    healthcare-intake-scheduling/
 ```

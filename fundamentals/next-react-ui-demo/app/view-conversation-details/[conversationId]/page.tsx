@@ -35,7 +35,7 @@ type ConversationDetailPayload = {
   error?: string;
 };
 
-export default function ViewRecordingsPage() {
+export default function ViewConversationDetailsPage() {
   const params = useParams<{ conversationId: string }>();
   const conversationId = params.conversationId;
   const [payload, setPayload] = useState<ConversationDetailPayload | null>(null);

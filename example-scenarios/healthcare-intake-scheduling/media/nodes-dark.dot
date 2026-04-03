@@ -8,7 +8,7 @@ digraph HealthcareFlow {
     <TABLE BORDER="0" CELLBORDER="0" CELLPADDING="4">
       <TR><TD><B><FONT POINT-SIZE="16">intro</FONT></B></TD></TR>
       <TR><TD><FONT POINT-SIZE="3"> </FONT></TD></TR>
-      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="11" COLOR="#94a3b8"><B>Task message</B></FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="11" COLOR="#94a3b8"><B>Task instruction</B></FONT></TD></TR>
       <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">Greet the patient warmly and introduce yourself</FONT></TD></TR>
       <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">as a medical screening assistant.</FONT></TD></TR>
       <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">Explain that you'll help with a brief screening questionnaire.</FONT></TD></TR>
@@ -19,21 +19,19 @@ digraph HealthcareFlow {
     <TABLE BORDER="0" CELLBORDER="0" CELLPADDING="4">
       <TR><TD><B><FONT POINT-SIZE="16">data_intake</FONT></B></TD></TR>
       <TR><TD><FONT POINT-SIZE="3"> </FONT></TD></TR>
-      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="11" COLOR="#94a3b8"><B>Task message</B></FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="11" COLOR="#94a3b8"><B>Task instruction</B></FONT></TD></TR>
       <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">Collect full name, age, primary reason for visit, and symptoms.</FONT></TD></TR>
       <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">Ask one question at a time and keep the tone conversational.</FONT></TD></TR>
       <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">If the patient shows something on camera, call the vision tool.</FONT></TD></TR>
       <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">When enough info is gathered, transition to appointment booking.</FONT></TD></TR>
       <TR><TD><FONT POINT-SIZE="3"> </FONT></TD></TR>
-      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="11" COLOR="#94a3b8"><B>pre_actions:</B></FONT> <FONT POINT-SIZE="11" COLOR="#0e7490"><I>Patient Intake Pre Action</I></FONT></TD></TR>
-      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="11" COLOR="#94a3b8"><B>post_actions:</B></FONT> <FONT POINT-SIZE="11" COLOR="#9333ea"><I>Patient Intake Post Action</I></FONT></TD></TR>
     </TABLE>
   >];
   appointment_booking [label=<
     <TABLE BORDER="0" CELLBORDER="0" CELLPADDING="4">
       <TR><TD><B><FONT POINT-SIZE="16">appointment_booking</FONT></B></TD></TR>
       <TR><TD><FONT POINT-SIZE="3"> </FONT></TD></TR>
-      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="11" COLOR="#94a3b8"><B>Task message</B></FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="11" COLOR="#94a3b8"><B>Task instruction</B></FONT></TD></TR>
       <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">Help the patient schedule an appointment.</FONT></TD></TR>
       <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">Ask for preferred date, time, and in-person vs virtual.</FONT></TD></TR>
       <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">After collecting details, use the HTTP booking tool.</FONT></TD></TR>
@@ -44,7 +42,7 @@ digraph HealthcareFlow {
     <TABLE BORDER="0" CELLBORDER="0" CELLPADDING="4">
       <TR><TD><B><FONT POINT-SIZE="16">qa</FONT></B></TD></TR>
       <TR><TD><FONT POINT-SIZE="3"> </FONT></TD></TR>
-      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="11" COLOR="#94a3b8"><B>Task message</B></FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="11" COLOR="#94a3b8"><B>Task instruction</B></FONT></TD></TR>
       <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">Answer patient questions about screening, clinic details, or other topics.</FONT></TD></TR>
       <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">Be helpful, empathetic, concise, and use RAG for clinic questions.</FONT></TD></TR>
       <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">When the patient is ready to conclude, use the transition tool.</FONT></TD></TR>
@@ -54,11 +52,11 @@ digraph HealthcareFlow {
     <TABLE BORDER="0" CELLBORDER="0" CELLPADDING="4">
       <TR><TD><B><FONT POINT-SIZE="16">end</FONT></B></TD></TR>
       <TR><TD><FONT POINT-SIZE="3"> </FONT></TD></TR>
-      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="11" COLOR="#6b7280"><B>Task message</B></FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="11" COLOR="#6b7280"><B>Task instruction</B></FONT></TD></TR>
       <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">Thank the patient for completing the screening.</FONT></TD></TR>
       <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12">Provide brief next steps, then end the conversation.</FONT></TD></TR>
       <TR><TD><FONT POINT-SIZE="3"> </FONT></TD></TR>
-      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="11" COLOR="#94a3b8"><B>post_actions:</B></FONT> <FONT POINT-SIZE="11" COLOR="#b45309"><I>END_CONVERSATION</I></FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="11" COLOR="#94a3b8"><B>end_after_bot_response</B></FONT> <FONT POINT-SIZE="11" COLOR="#b45309"><I>true</I></FONT></TD></TR>
     </TABLE>
   >];
 
@@ -78,9 +76,9 @@ digraph HealthcareFlow {
   intake_vision [label="VIEW_CAMERA\n(vision)", style="rounded,dashed,filled", fillcolor="#0f2a32", color="#0e7490", fontcolor="#67e8f9"];
   booking_http [label="book_appointment\n(http)", style="rounded,dashed,filled", fillcolor="#10261a", color="#15803d", fontcolor="#86efac"];
   qa_rag [label="about_our_clinic\n(rag)", style="rounded,dashed,filled", fillcolor="#221638", color="#7c3aed", fontcolor="#c4b5fd"];
-  intro_role_message [label=<
+  role_instruction [label=<
     <TABLE BORDER="0" CELLBORDER="0" CELLPADDING="4">
-      <TR><TD ALIGN="LEFT"><B><FONT POINT-SIZE="16">Role message</FONT></B></TD></TR>
+      <TR><TD ALIGN="LEFT"><B><FONT POINT-SIZE="16">Role instruction</FONT></B></TD></TR>
       <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="13">You are a friendly and professional medical screening assistant.</FONT></TD></TR>
       <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="13">Responses are converted to audio, so keep them concise and avoid special characters.</FONT></TD></TR>
       <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="13">Speak clearly and warmly to help patients feel comfortable.</FONT></TD></TR>
@@ -88,11 +86,11 @@ digraph HealthcareFlow {
     </TABLE>
   >, style="rounded,dotted,filled", fillcolor="#3a2a14", color="#b45309", fontcolor="#fde68a"];
 
-  data_intake -> intake_vision [style=dashed, color="#9ca3af", arrowhead=none, constraint=false, label="  Use this tool when the user asks\n  you to look at the screen.", fontcolor="#e5e7eb", fontsize=12];
+  data_intake -> intake_vision [style=dashed, color="#9ca3af", arrowhead=none, constraint=false, label="  Use this tool when the user asks\n  you to look at the camera.", fontcolor="#e5e7eb", fontsize=12];
   qa -> qa_rag [style=dashed, color="#9ca3af", arrowhead=none, constraint=false, label="  a RAG tool with information\n  about our clinic", fontcolor="#e5e7eb", fontsize=12];
 
   { rank=same; data_intake; intake_vision; }
   { rank=same; appointment_booking; booking_http; }
   { rank=same; qa; qa_rag; }
-  { rank=same; intro; intro_role_message; }
+  { rank=same; intro; role_instruction; }
 }

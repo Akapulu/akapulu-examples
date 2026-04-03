@@ -16,29 +16,6 @@ def log_request(endpoint_name: str) -> None:
     print(f"Query Params: {request.args.to_dict()}")
     print(f"JSON Body: {request.get_json(silent=True)}")
 
-
-@app.post("/actions/pre")
-def pre_action():
-    log_request("PRE ACTION")
-    return jsonify(
-        {
-            "ok": True,
-            "message": "Pre-action received successfully.",
-        }
-    )
-
-
-@app.post("/actions/post")
-def post_action():
-    log_request("POST ACTION")
-    return jsonify(
-        {
-            "ok": True,
-            "message": "Post-action received successfully.",
-        }
-    )
-
-
 @app.post("/book-appointment")
 def book_appointment():
     log_request("BOOK APPOINTMENT")
