@@ -53,3 +53,5 @@ Open:
 - `http://localhost:3000`
 
 You should see the custom call surface with a **Start call** button. Click it to enter `connecting` with spinner/progress, then transition to the connected custom layout with video tiles, mic/cam/end controls, transcript, node chip, and tool toasts.
+
+When the call ends, the app automatically redirects to `/view-conversation-details/[conversationId]` so you can review the conversation metadata, transcript, and recording status.

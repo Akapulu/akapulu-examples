@@ -59,7 +59,7 @@ Open:
 
 - `http://localhost:3000/default`
 
-You should see the baseline prebuilt `AkapuluConversation` UI. Click **Start Call** to move into `connecting` with a loading spinner, progress bar, and setup status text. When setup is ready, it switches to the connected layout with video, controls, and transcript.
+You should see the baseline prebuilt `AkapuluConversation` UI. Click **Start Call** to move into `connecting` with a loading spinner, progress bar, and setup status text. When setup is ready, it switches to the connected layout with video, controls, and transcript. This route does not redirect when the call ends.
 
 ### 5) Configure and run **Customized** demo (`/customized`)
 
@@ -78,5 +78,7 @@ Then open:
 - `http://localhost:3000/customized`
 
 You should see a dark themed customized version of the same prebuilt component. Click **Start Call** for the same loading-to-connected flow. Transcript rows are custom rendered (`User` / `Assistant`), tool events use a custom dark toast, and conversation events are logged in the browser console.
+
+When the call ends on `/customized`, the app automatically redirects to `/view-conversation-details/[conversationId]` so you can review the conversation metadata, transcript, and recording status.
 
 You can keep the included public avatar ID, or replace `AVATAR_ID` in both connect routes.
