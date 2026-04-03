@@ -10,8 +10,8 @@
     "typecheck": "eslint ."
   },
   "dependencies": {
-    "@akapulu/react": "^0.3.1",
-    "@akapulu/server": "^0.1.0",
+    "@akapulu/react": "^0.3.3",
+    "@akapulu/server": "^0.1.4",
     "@akapulu/web-core": "^0.3.0",
     "@daily-co/daily-react": "^0.24.0",
     "lucide-react": "^1.7.0",

@@ -12,6 +12,7 @@
  * 5. `AkapuluBotAudio` plays assistant audio (hidden element).
  */
 
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import {
@@ -102,11 +103,13 @@ function VideoTile(props: VideoTileProps) {
 // =============================================================================
 
 function CustomUiConversationDemo() {
+  const router = useRouter();
   // ---------------------------------------------------------------------------
   // Akapulu session: status, polling text, transcripts, start/end
   // ---------------------------------------------------------------------------
   const {
     status,
+    conversationSessionId,
     completionPercent,
     latestUpdateText,
     transcripts,
@@ -141,6 +144,8 @@ function CustomUiConversationDemo() {
   const transcriptRef = useRef<HTMLDivElement | null>(null);
   const nodeColorIndexRef = useRef(0);
   const toolToastTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lastConversationIdRef = useRef<string | null>(null);
+  const redirectedConversationIdRef = useRef<string | null>(null);
 
   // ---------------------------------------------------------------------------
   // Akapulu hooks (side effects)
@@ -176,6 +181,20 @@ function CustomUiConversationDemo() {
       if (toolToastTimeoutRef.current) clearTimeout(toolToastTimeoutRef.current);
     };
   }, []);
+
+  useEffect(() => {
+    if (!conversationSessionId) return;
+    lastConversationIdRef.current = conversationSessionId;
+  }, [conversationSessionId]);
+
+  useEffect(() => {
+    if (status !== "ended") return;
+    if (!lastConversationIdRef.current) return;
+    if (redirectedConversationIdRef.current === lastConversationIdRef.current) return;
+
+    redirectedConversationIdRef.current = lastConversationIdRef.current;
+    router.push(`/view-conversation-details/${encodeURIComponent(lastConversationIdRef.current)}`);
+  }, [router, status]);
 
   // Keep transcript scrolled to the latest line
   useEffect(() => {
@@ -303,7 +322,7 @@ function CustomUiConversationDemo() {
       <h1 className="headlessTitle">Akapulu next.js custom UI demo</h1>
 
       {/* Not in an active call: offer start (includes recoverable error state) */}
-      {status === "idle" || status === "ended" || status === "error" ? (
+      {status === "idle" || status === "error" ? (
         <div className="headlessStartWrap">
           <button
             className="headlessStartButton"

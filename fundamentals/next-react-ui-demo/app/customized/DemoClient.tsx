@@ -7,9 +7,10 @@
  * API routes live under `/api/customized/akapulu/*` so this page stays separate from the default demo.
  */
 
-import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef } from "react";
 
-import { AkapuluProvider, useAkapuluEvents } from "@akapulu/react";
+import { AkapuluProvider, useAkapuluEvents, useAkapuluSession } from "@akapulu/react";
 import { AkapuluConversation } from "@akapulu/react-ui";
 
 import { darkStyles, renderDarkToolEvent } from "./customization";
@@ -72,22 +73,34 @@ function ConversationEventLogger() {
   return null;
 }
 
+function ConversationEndedRedirect() {
+  const router = useRouter();
+  const { status, conversationSessionId } = useAkapuluSession();
+  const lastConversationIdRef = useRef<string | null>(null);
+  const redirectedConversationIdRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (!conversationSessionId) return;
+    lastConversationIdRef.current = conversationSessionId;
+  }, [conversationSessionId]);
+
+  useEffect(() => {
+    if (status !== "ended") return;
+    if (!lastConversationIdRef.current) return;
+    if (redirectedConversationIdRef.current === lastConversationIdRef.current) return;
+
+    redirectedConversationIdRef.current = lastConversationIdRef.current;
+    router.push(`/view-conversation-details/${encodeURIComponent(lastConversationIdRef.current)}`);
+  }, [router, status]);
+
+  return null;
+}
+
 // =============================================================================
 // Root: provider + prebuilt conversation + customization module
 // =============================================================================
 
 export default function DemoClient() {
-  const [isToolToastVisible, setIsToolToastVisible] = useState(false);
-  const toolToastTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => {
-    return () => {
-      if (!toolToastTimeoutRef.current) return;
-      clearTimeout(toolToastTimeoutRef.current);
-      toolToastTimeoutRef.current = null;
-    };
-  }, []);
-
   return (
     <AkapuluProvider
       config={{
@@ -100,23 +113,14 @@ export default function DemoClient() {
         },
       }}
     >
+      <ConversationEndedRedirect />
       <ConversationEventLogger />
 
       <AkapuluConversation
         title="Akapulu next.js react-ui customized demo"
         styles={darkStyles}
-        onToolEvent={(tool) => {
-          console.log("customized-demo tool_event", tool.messageType, tool.functionName);
-          setIsToolToastVisible(true);
-          if (toolToastTimeoutRef.current) {
-            clearTimeout(toolToastTimeoutRef.current);
-          }
-          toolToastTimeoutRef.current = setTimeout(() => {
-            setIsToolToastVisible(false);
-            toolToastTimeoutRef.current = null;
-          }, 4000);
-        }}
-        renderToolEvent={(tool) => renderDarkToolEvent(tool, isToolToastVisible)}
+        toolEventTimeoutMs={4000}
+        renderToolEvent={(tool) => renderDarkToolEvent(tool, true)}
         renderTranscriptEntry={(entry) => (
           <div>
             <strong>{entry.speaker === "user" ? "User" : "Assistant"}:</strong> {entry.text}
