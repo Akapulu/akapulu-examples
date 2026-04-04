@@ -303,8 +303,8 @@ This repository also includes demo applications built with the Web SDK under:
 
 ```text
 fundamentals/
-  next-react-ui-demo/
-  next-react-custom-ui-demo/
+  prebuilt-ui/
+  custom-ui/
 ```
 
 In your connect route, pass `scenario_id`, `avatar_id`, and runtime variables required by this scenario (`patient_id`, `today`), for example:
