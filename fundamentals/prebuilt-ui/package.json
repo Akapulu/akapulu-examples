@@ -10,14 +10,14 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@akapulu/react": "^0.3.3",
-    "@akapulu/react-ui": "^0.3.5",
+    "@akapulu/react": "^0.3.4",
+    "@akapulu/react-ui": "^0.3.6",
     "@akapulu/server": "^0.1.5",
     "@akapulu/web-core": "^0.3.1",
     "lucide-react": "^1.7.0",
     "next": "16.2.2",
-    "react": "^18",
-    "react-dom": "^18"
+    "react": "^19",
+    "react-dom": "^19"
   },
   "devDependencies": {
     "@types/node": "^20",
