@@ -25,27 +25,6 @@ The scenario is structured around the following node sequence:
 
 ![Healthcare intake scenario node flow](./media/nodes-light.svg)
 
-## Connect your scenario to external systems
-
-Endpoints let you connect the LLM to the outside world so it can do more than respond with text. With endpoints, the conversation can trigger real backend actions such as lifecycle tracking and appointment booking.
-
-Each endpoint includes:
-
-- `name` - endpoint label in Akapulu
-- `url` - destination endpoint URL
-- `method` - HTTP method (for example `POST`)
-- `headers` - request headers (auth and metadata)
-- `body` - JSON payload sent to your backend
-
-In endpoint templates, use variables as follows:
-
-- `{{runtime.*}}` - runtime variables you pass into the [connect endpoint](https://docs.akapulu.com/api-reference/conversations/connect) when starting the conversation (headers or body)
-- `{{secret.*}}` - secrets configured in [akapulu.com/secrets](https://akapulu.com/secrets) (can be used in endpoint headers only)
-- `{{llm.*}}` - values the model extracts or fills at call time for function tools
-
-For `{{llm.*}}` variables, include a short description after a colon that clearly tells the model what value it should populate in that field.  
-Example: `{{llm.date:Appointment date in YYYY-MM-DD}}`
-
 ## Local endpoint server for this demo
 
 Before creating endpoints in this example:
@@ -56,8 +35,6 @@ Before creating endpoints in this example:
 Endpoints need to be hosted at public HTTP URLs that can receive incoming requests.
 
 For this example, we use a lightweight local Flask server in `Flask Server/flask-server.py`.
-
-This demo Flask server provides a booking route that matches the current scenario flow:
 
 - `POST /book-appointment` - receives booking details, prints request inputs, and returns a mock `appointment_confirmation_id`.
 
@@ -126,7 +103,9 @@ This starts an ngrok public endpoint and securely forwards incoming requests to 
 
 ## Creating endpoints
 
-This scenario uses one HTTP endpoint for appointment booking.
+This scenario uses one [HTTP endpoint](https://docs.akapulu.com/guides/endpoints/create-endpoint) for appointment booking.
+
+When configuring endpoint fields, we use Akapulu [templates and variable syntax](https://docs.akapulu.com/guides/endpoints/templates-and-variables) for runtime values and node context.
 
 ### Create the appointment booking endpoint
 
@@ -158,26 +137,11 @@ Go to [akapulu.com/endpoints](https://akapulu.com/endpoints), click **Create End
 }
 ```
 
-Since these endpoints use the runtime variable `patient_id`, you must pass a value for `patient_id` when calling the [connect endpoint](https://docs.akapulu.com/api-reference/conversations/connect).
+Since these endpoints use the runtime variable `patient_id`, you must pass a value for `patient_id` when calling the Web SDK connect flow (see [Server SDK connectConversation](https://docs.akapulu.com/web-sdk/server-sdk)).
 
-## How RAG knowledge bases work in Akapulu
+## Using a knowledge base
 
-A RAG knowledge base is a knowledge source your assistant can query during a live conversation.
-
-At a high level, the flow for attaching a RAG tool is:
-
-1) You create a knowledge base in Akapulu.
-2) You add one or more documents to that knowledge base.
-3) Akapulu indexes those documents into retrievable chunks.
-4) In your scenario builder, open the node where you want knowledge-backed answers, add a **RAG tool**, and select your knowledge base for that tool (or via JSON, add a function with `type: "rag"` and set `knowledge_base_id` to your knowledge base ID).
-5) During the conversation, when the flow enters that node, the assistant can call the RAG tool to query that knowledge base before it responds.
-
-This lets the assistant answer domain-specific questions using your own content, instead of relying only on general model knowledge.
-
-In this example, the Q&A node uses a RAG tool for clinic-specific questions, so patients can ask about clinic policies, scheduling details, and related operational information.
-
-We have provided an example knowledge base file for this setup: `Clinic-Details.md`.
-
+This example uses an Akapulu [knowledge base](https://docs.akapulu.com/guides/knowledge-bases/overview) and a node-level [RAG tool](https://docs.akapulu.com/guides/scenarios/overview#create-the-rag-tool) so the assistant can answer clinic questions from retrieved document context instead of guessing.
 
 ### Create the knowledge base for this example
 

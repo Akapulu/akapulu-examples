@@ -1,28 +1,34 @@
 # Akapulu Examples
 
-Public examples for building with Akapulu.
+![Akapulu](logo.png)
 
-This repository is organized into two top-level sections:
+Practical examples for building with Akapulu.
 
-- `fundamentals`
-  - Core integration examples based on the Akapulu Web SDK.
-  - Includes:
-    - `prebuilt-ui` — `@akapulu/react-ui` (`AkapuluConversation`), with **Default** and **Styled** variants in one app
-    - `custom-ui` — `@akapulu/react` only; you build the call UI yourself
-
-- `example-scenarios`
-  - Scenario-focused end-to-end examples.
-  - Includes:
-    - `healthcare-intake-scheduling`
-
-## Repository structure
+## File tree
 
 ```text
 akapulu-examples/
   README.md
+
   fundamentals/
     prebuilt-ui/
     custom-ui/
+
   example-scenarios/
     healthcare-intake-scheduling/
 ```
+
+## Examples
+
+### fundamentals
+
+- `fundamentals/prebuilt-ui`  
+  Shows the prebuilt conversation UI path with both a minimal baseline and a styled variant. It also demonstrates post-call review with conversation details and recording retrieval.
+
+- `fundamentals/custom-ui`  
+
+  Shows a more customizable path using Akapulu hooks instead of the full prebuilt conversation component. This example gives you tighter control over layout, transcript rendering, and in-call controls.
+### example-scenarios
+
+- `example-scenarios/healthcare-intake-scheduling`  
+  Simulates a virtual front-desk conversation where a patient shares intake details, symptoms, and scheduling preferences. The flow then guides the patient into booking an appointment, an FAQ section, and then concludes the screening process.

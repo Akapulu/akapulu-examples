@@ -1,10 +1,8 @@
 # custom-ui
 
-Sample app for a **fully custom** conversation UI using `@akapulu/react` (provider, hooks, Daily primitives) and server-side API routing (`@akapulu/server`). This path does not use `@akapulu/react-ui`.
+Sample app for a **fully custom** conversation UI using `@akapulu/react` (provider, hooks, Daily primitives) and server-side API routing (`@akapulu/server`).
 
 You build the call surface yourself: video tiles, mic/camera/end controls, transcript, loading and error states, and tool toasts.
-
-Implementation note: this sample is a Next.js App Router app so the API key stays on the server. The Akapulu packages only require React.
 
 ## Quickstart
 

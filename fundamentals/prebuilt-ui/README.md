@@ -9,8 +9,6 @@ This project includes two variants so you can compare side by side:
 
 Each variant uses its own API route prefix under `app/api/` so connect and updates stay isolated.
 
-Implementation note: this sample is a Next.js App Router app so the API key stays on the server. The Akapulu packages only require React.
-
 ## Quickstart
 
 ### 1) Prepare dependencies
