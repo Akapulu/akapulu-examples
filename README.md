@@ -1,6 +1,6 @@
 # Akapulu Examples
 
-![Akapulu](logo.png)
+<img src="logo.png" alt="Akapulu" width="72" />
 
 Practical examples for building with Akapulu.
 
