@@ -1,6 +1,6 @@
 # Akapulu Examples
 
-<img src="logo.png" alt="Akapulu" width="72" />
+<img src="logo.png" alt="Akapulu" width="96" />
 
 Practical examples for building with Akapulu.
 
