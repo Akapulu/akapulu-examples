@@ -35,7 +35,7 @@ AKAPULU_API_KEY=your_api_key_here
 
 ### 3) Create a scenario
 
-Create a scenario in the Akapulu dashboard and copy the scenario UUID.
+Create a [scenario](https://docs.akapulu.com/guides/scenarios/overview) in the Akapulu dashboard and copy the scenario UUID.
 
 ### 4) Configure and run **Default** (`/default`)
 
