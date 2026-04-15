@@ -15,6 +15,5 @@ venv/
 !.env.example
 
 example-scenarios/**/config.json
-example-scenarios/**/runtime-vars.ts
-example-scenarios/**/stt-keywords.ts
+example-scenarios/**/connect-payload.ts
 example-scenarios/**/mintlify-docs.mdx

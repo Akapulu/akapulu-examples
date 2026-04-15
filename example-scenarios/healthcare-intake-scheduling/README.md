@@ -329,20 +329,33 @@ Related docs pages:
 In your connect route, pass `scenario_id`, `avatar_id`, and runtime variables required by this scenario (`patient_id`, `today`), for example:
 
 ```ts
-return await akapulu.connectConversation({
-  scenario_id: "<your-scenario-id>",
-  avatar_id: "<your-avatar-id>",
-  stt_keywords: [
-    "medication",
-    "prescription",
-    "virtual",
-  ];,
-  runtime_vars: {
-    patient_id: "patient_001",
-    today: new Date().toISOString().slice(0, 10),
-  };
+const runtimeVars = {
+  patient_id: "patient_001",
+  today: new Date().toISOString().slice(0, 10),
+};
+
+const patientName = "James Bradford";
+
+const sttKeywords = [patientName];
+
+const connectPayload = {
+  // Replace with your scenario id
+  scenario_id: "<scenario id here>",
+
+  // Catalog avatar id
+  avatar_id: "f77de1e5-6ce3-448c-8cff-a8cc3c8a50bf",
+
+  // Patient name as speech recognition keyword
+  stt_keywords: sttKeywords,
+
+  // Runtime variables
+  runtime_vars: runtimeVars,
+
+  // Record conversation
   record_conversation: true,
-});
+};
+
+return await akapulu.connectConversation(connectPayload);
 ```
 
 For public avatar options, browse the [Avatar Catalog guide](https://docs.akapulu.com/guides/avatars/avatar-catalog).

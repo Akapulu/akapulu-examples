@@ -3,24 +3,24 @@ import { AkapuluApiError, createAkapuluServerClient } from "@akapulu/server";
 /**
  * Browser → this route → Akapulu `connectConversation`.
  *
- * Default `react-ui` demo (`/default`). `AkapuluProvider` POSTs here with no JSON body;
- * this handler sends an empty `runtime_vars` object by default. API key / base URL come from env.
+ * Default `react-ui` demo (`/default`). `AkapuluProvider` POSTs here with no JSON body.
+ * API key / base URL come from env.
  */
 
-// Demo-only IDs — replace with your scenario and avatar from the dashboard.
-const SCENARIO_ID = "<scenario id here>";
-const AVATAR_ID = "f77de1e5-6ce3-448c-8cff-a8cc3c8a50bf";
+/* AKAPULU_CONNECT_PAYLOAD_START */
+const connectPayload = {
+  scenario_id: "<scenario id here>",
+  avatar_id: "f77de1e5-6ce3-448c-8cff-a8cc3c8a50bf",
+  runtime_vars: {},
+  record_conversation: true,
+};
+/* AKAPULU_CONNECT_PAYLOAD_END */
 
 export async function POST() {
   const client = createAkapuluServerClient();
 
   return client
-    .connectConversation({
-      scenario_id: SCENARIO_ID,
-      avatar_id: AVATAR_ID,
-      runtime_vars: {},
-      record_conversation: true,
-    })
+    .connectConversation(connectPayload)
     .then((payload) => Response.json(payload))
     .catch((error: unknown) => {
       if (error instanceof AkapuluApiError) {

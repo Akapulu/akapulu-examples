@@ -43,10 +43,13 @@ Edit:
 
 - `app/api/default/akapulu/connect/route.ts`
 
-Set:
+In `connectPayload`, replace the `<your-scenario-id>` placeholder:
 
 ```ts
-const SCENARIO_ID = "<your-scenario-id>";
+const connectPayload = {
+  scenario_id: "<your-scenario-id>",
+  // ...
+};
 ```
 
 Then run:
@@ -67,10 +70,13 @@ Edit:
 
 - `app/api/styled/akapulu/connect/route.ts`
 
-Set:
+In `connectPayload`, replace the `<your-scenario-id>` placeholder:
 
 ```ts
-const SCENARIO_ID = "<your-scenario-id>";
+const connectPayload = {
+  scenario_id: "<your-scenario-id>",
+  // ...
+};
 ```
 
 Then open:
@@ -81,4 +87,4 @@ You should see a dark-themed version of the same prebuilt component with style o
 
 When the call ends on `/styled`, the app automatically redirects to `/view-conversation-details/[conversationId]` so you can review the conversation metadata, transcript, and recording status.
 
-You can keep the included public avatar ID, or replace `AVATAR_ID` in both connect routes.
+You can keep the included public avatar ID, or replace `avatar_id` inside the `connectPayload` block in both connect routes.

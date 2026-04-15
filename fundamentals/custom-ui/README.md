@@ -34,13 +34,16 @@ Edit:
 
 - `app/api/akapulu/connect/route.ts`
 
-Set:
+In `connectPayload`, replace the `<your-scenario-id>` placeholder:
 
 ```ts
-const SCENARIO_ID = "<your-scenario-id>";
+const connectPayload = {
+  scenario_id: "<your-scenario-id>",
+  // ...
+};
 ```
 
-You can keep the included public avatar ID, or replace `AVATAR_ID`.
+You can keep the included public avatar ID, or replace `avatar_id` inside the `connectPayload` block.
 
 ### 5) Run
 
