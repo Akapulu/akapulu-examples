@@ -4,39 +4,62 @@
 
 This example scenario shows how to run a full patient screening conversation that collects intake details, schedules an appointment, answers clinic questions, and then closes the session cleanly.
 
-See the example page in our docs: [Healthcare Intake & Scheduling](https://docs.akapulu.com/examples/scenarios/healthcare-intake-scheduling).
+## Scenario Overview
 
 The scenario is structured around the following node sequence:
 
 - `intro`
-  - Greets the patient, explains the screening flow, and asks for consent to proceed.
+  - Greet the patient warmly and introduce yourself as a medical screening assistant.
+  - Uses `transition` tools.
 - `data_intake`
-  - Collects core patient details (name, age, reason for visit, symptoms/concerns).
-  - Uses a `vision` tool when the patient asks the assistant to look at something on camera.
+  - Collect the patient's basic information.
+  - Uses `transition`, `vision` tools.
 - `appointment_booking`
-  - Collects preferred date/time and visit type (in-person vs virtual).
-  - Uses an `http` tool to submit the appointment booking request.
+  - Help the patient schedule an appointment.
+  - Uses `http` tools.
 - `qa`
-  - Handles patient follow-up questions.
-  - Uses a `rag` tool to answer clinic-specific questions from the knowledge base.
+  - Answer the patient's questions about the screening process, our clinic, or anything else they want to know.
+  - Uses `transition`, `rag` tools.
 - `end`
-  - Gives a brief closing summary and next steps.
-  - Ends the conversation.
+  - Thank the patient for completing the screening.
+  - Ends the conversation after the assistant responds.
 
-![Healthcare intake scenario node flow](./media/nodes-light.svg)
+### Node Graph
 
-## Local endpoint server for this demo
+```mermaid
+flowchart TD
+  node_0["intro"]
+  node_1["data_intake"]
+  node_2["appointment_booking"]
+  node_3["qa"]
+  node_4["end"]
+  node_0 -->|transition_to_data_intake| node_1
+  node_1 -->|transition_to_appointment_booking| node_2
+  node_2 -->|book_appointment| node_3
+  node_3 -->|transition_to_end_screening| node_4
+```
 
-Before creating endpoints in this example:
+## Secrets
 
-- These example endpoint headers reference a secret named `webhook_token`, which should be configured in the [Akapulu secrets tab](https://akapulu.com/secrets).
-- Example secret value: `webhook_secret_123`
+Create these secrets in the [Akapulu secrets tab](https://akapulu.com/secrets) before testing the endpoints in this example:
+
+- **Create secret `webhook_token`**
+
+  - Name: `webhook_token`
+  - Example value: `webhook_secret_123`
+
+
+## Local Endpoint Server
 
 Endpoints need to be hosted at public HTTP URLs that can receive incoming requests.
 
 For this example, we use a lightweight local Flask server in `Flask Server/flask-server.py`.
 
-- `POST /book-appointment` - receives booking details, prints request inputs, and returns a mock `appointment_confirmation_id`.
+Server file: `Flask Server/flask-server.py`
+
+Endpoint name: `Patient Intake Book Appointment`
+- Route: `POST /book-appointment`
+- Local port: `8080`
 
 Run the Flask server:
 
@@ -58,7 +81,7 @@ python3 -m venv flask-venv && source flask-venv/bin/activate && pip install flas
 cd "Flask Server" && python flask-server.py
 ```
 
-## Expose your local server with ngrok
+## ngrok Setup
 
 Your endpoints must be publicly reachable so Akapulu can call them during a live conversation. In production, you can host them on any platform you prefer.
 
@@ -88,7 +111,7 @@ ngrok config add-authtoken $YOUR_TOKEN
 Note: ngrok provides one automatically assigned dev domain on free plans, which you can copy from the Domains page.
 
 - Open [dashboard.ngrok.com/domains](https://dashboard.ngrok.com/domains).
-- Copy your assigned dev domain URL (`https://<your-domain>.ngrok-free.app`).
+- Copy your assigned dev domain URL (`https://<YOUR_NGROK_DOMAIN>`).
 
 ### 4) Start ngrok for your Flask server
 
@@ -100,70 +123,83 @@ ngrok http 8080 --url https://<YOUR_NGROK_DOMAIN>
 
 This starts an ngrok public endpoint and securely forwards incoming requests to your local Flask server on port `8080`.
 
+Use that same ngrok domain in your Akapulu endpoint URL.
 
-## Creating endpoints
+`https://<YOUR_NGROK_DOMAIN>/book-appointment`
 
-This scenario uses one [HTTP endpoint](https://docs.akapulu.com/guides/endpoints/create-endpoint) for appointment booking.
+## Endpoints
+
+This scenario uses 1 [HTTP endpoint](https://docs.akapulu.com/guides/endpoints/create-endpoint) configuration.
 
 When configuring endpoint fields, we use Akapulu [templates and variable syntax](https://docs.akapulu.com/guides/endpoints/templates-and-variables) for runtime values and node context.
 
-### Create the appointment booking endpoint
+### Create the `Patient Intake Book Appointment` endpoint
 
-Create an endpoint that runs as the booking action for the `appointment_booking` node.
+Create an endpoint that runs as the action for `book_appointment`.
+
+Use your ngrok public domain in the endpoint URL below.
 
 Go to [akapulu.com/endpoints](https://akapulu.com/endpoints), click **Create Endpoint**, then enter:
 
 - **Setup tab**
-  - `name`: `Patient Intake Book Appointment`
-  - `url`: `https://<YOUR_NGROK_DOMAIN>/book-appointment`
-  - `method`: `POST`
+
+  - Name: `Patient Intake Book Appointment`
+  - URL: `https://<YOUR_NGROK_DOMAIN>/book-appointment`
+  - Method: `POST`
+
 - **Headers/Body tab**
+
   - `headers`:
-```json
-{
-  "Content-Type": "application/json",
-  "X-Patient-ID": "{{runtime.patient_id}}",
-  "Authorization": "Bearer {{secret.webhook_token}}"
-}
-```
+
+    ```json
+    {
+      "Content-Type": "application/json",
+      "X-Patient-ID": "{{runtime.patient_id}}",
+      "Authorization": "Bearer {{secret.webhook_token}}"
+    }
+    ```
+
   - `body`:
-```json
-{
-  "date": "{{llm.date:Appointment date in YYYY-MM-DD}}",
-  "time": "{{llm.time:Appointment time in HH:MM 24-hour}}",
-  "appointment_type": "{{llm.appointment_type:Type like follow_up or new_consult}}",
-  "patient_id": "{{runtime.patient_id}}",
-  "source": "patient_intake_screening"
-}
-```
 
-Since these endpoints use the runtime variable `patient_id`, you must pass a value for `patient_id` when calling the Web SDK connect flow (see [Server SDK connectConversation](https://docs.akapulu.com/web-sdk/server-sdk)).
+    ```json
+    {
+      "date": "{{llm.date:Appointment date in YYYY-MM-DD}}",
+      "time": "{{llm.time:Appointment time in HH:MM 24-hour}}",
+      "appointment_type": "{{llm.appointment_type:Type like follow_up or new_consult}}",
+      "patient_id": "{{runtime.patient_id}}",
+      "source": "patient_intake_screening"
+    }
+    ```
 
-## Using a knowledge base
+## Knowledge Bases
 
-This example uses an Akapulu [knowledge base](https://docs.akapulu.com/guides/knowledge-bases/overview) and a node-level [RAG tool](https://docs.akapulu.com/guides/scenarios/overview#create-the-rag-tool) so the assistant can answer clinic questions from retrieved document context instead of guessing.
+This example uses an Akapulu [knowledge base](https://docs.akapulu.com/guides/knowledge-bases/overview) and a node-level [RAG tool](https://docs.akapulu.com/guides/scenarios/overview#create-the-rag-tool) so the assistant can answer questions from retrieved document context instead of guessing.
 
-### Create the knowledge base for this example
+### Create the knowledge base `Healthcare Intake Demo Knowledge Base`
 
 1) Go to [akapulu.com/knowledge-bases](https://akapulu.com/knowledge-bases) and click **Create**.
 
 2) Enter knowledge base details:
 
-- **Name**: `Healthcare Intake Demo Knowledge Base`
-- **Description**: `Reference information for the Healthcare Intake & Scheduling demo scenario, including clinic policies, appointment details, and patient-facing FAQ content.`
+- **Knowledge base details**
+
+  - Name: `Healthcare Intake Demo Knowledge Base`
+  - Description: `Reference information for the Healthcare Intake & Scheduling demo scenario, including clinic policies, appointment details, and patient-facing FAQ content.`
 
 3) Open the knowledge base you created, then click **Add Document**.
 
 4) Enter document details:
 
-- **Name**: `Clinic Details`
-- **Description**: `Clinic operations, hours, policies, and scheduling information used by the demo assistant for patient Q&A.`
+- **Document details**
+
+  - Name: `Clinic Details`
+  - Description: `Clinic operations, hours, policies, and scheduling information used by the demo assistant for patient Q&A.`
 
 5) Upload this file:
 
-- `./Clinic-Details.md`
+  - `./Clinic-Details.md`
 
-## Copy the IDs you need
+## IDs
 
 Before creating the scenario, copy these IDs:
 
@@ -171,11 +207,11 @@ Before creating the scenario, copy these IDs:
 - Knowledge base ID for `Healthcare Intake Demo Knowledge Base`
 - (optionally) Avatar ID (UUID) for the avatar you want to use
 
-## Create scenario
+## Scenario
 
 1) Go to [akapulu.com/scenarios](https://akapulu.com/scenarios) and click **Create Scenario**.
 
-2) Enter a name for your scenario.  
+2) Enter a name for your scenario.
 Default name: `Healthcare Intake & Scheduling Demo`
 
 3) Click the **JSON** option in the nodes/json toggle.
@@ -186,7 +222,7 @@ For JSON structure, field rules, and schema details, see the [Using JSON guide](
 
 Paste in the following JSON:
 
-Replace every placeholder ID in this JSON with your actual IDs from the endpoints and knowledge base you created.
+Replace every placeholder ID in this JSON with your actual IDs from the endpoints and knowledge bases you created.
 
 ```json
 {
@@ -242,7 +278,7 @@ Replace every placeholder ID in this JSON with your actual IDs from the endpoint
         {
           "name": "about_our_clinic",
           "type": "rag",
-          "knowledge_base_id": "<YOUR_KNOWLEDGE_BASE_ID>",
+          "knowledge_base_id": "<YOUR_ABOUT_OUR_CLINIC_KNOWLEDGE_BASE_ID>",
           "description": "a RAG tool with information about our clinic"
         }
       ],
@@ -259,6 +295,20 @@ Replace every placeholder ID in this JSON with your actual IDs from the endpoint
 
 After you paste the JSON, click **Save**. Use the toggle in the top-right corner of the scenario editor to switch between JSON mode and visual mode.
 
+## Runtime Variables
+
+This example expects the following runtime variables when you call the connect flow:
+
+- `patient_id`
+- `today`
+
+```ts
+{
+  patient_id: "patient_001",
+  today: new Date().toISOString().slice(0, 10),
+};
+```
+
 ## Use in UI
 
 After your scenario is saved, integrate it in your own application using the Akapulu Web SDK.
@@ -271,19 +321,23 @@ fundamentals/
   custom-ui/
 ```
 
+Related docs pages:
+
+- [Prebuilt UI](https://docs.akapulu.com/examples/basic/prebuilt-ui)
+- [Custom UI](https://docs.akapulu.com/examples/basic/custom-ui)
+
 In your connect route, pass `scenario_id`, `avatar_id`, and runtime variables required by this scenario (`patient_id`, `today`), for example:
 
 ```ts
 return await akapulu.connectConversation({
   scenario_id: "<your-scenario-id>",
-  avatar_id: "d20e3ec3-b713-4e5e-aa5b-02f09031a339",
+  avatar_id: "<your-avatar-id>",
   runtime_vars: {
     patient_id: "patient_001",
     today: new Date().toISOString().slice(0, 10),
-  },
+  };
   record_conversation: true,
 });
 ```
 
-For public avatar options, browse [akapulu.com/catalog](https://akapulu.com/catalog).
-
+For public avatar options, browse the [Avatar Catalog guide](https://docs.akapulu.com/guides/avatars/avatar-catalog).

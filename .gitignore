@@ -13,3 +13,8 @@ venv/
 .env.local
 .env.*.local
 !.env.example
+
+example-scenarios/**/config.json
+example-scenarios/**/runtime-vars.ts
+
+markdown-generator.py
