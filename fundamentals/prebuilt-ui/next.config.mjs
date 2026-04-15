@@ -4,7 +4,6 @@ const nextConfig = {
     externalDir: true,
   },
   transpilePackages: [
-    "@akapulu/web-core",
     "@akapulu/react",
     "@akapulu/react-ui",
     "@akapulu/server",

@@ -22,10 +22,9 @@ import {
   useAkapuluMediaControls,
   useAkapuluSession,
 } from "@akapulu/react";
+import type { NormalizedToolEvent } from "@akapulu/react";
 import { DailyVideo, useDaily, useParticipantIds, useVideoTrack } from "@daily-co/daily-react";
 import { Camera, CameraOff, Database, Eye, Globe, Mic, MicOff, PhoneOff } from "lucide-react";
-
-import type { NormalizedToolEvent } from "@akapulu/web-core";
 
 // =============================================================================
 // UI theming: flow node chip colors + tool-event toast chrome

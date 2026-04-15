@@ -1,6 +1,6 @@
 import { Database, Eye, Globe } from "lucide-react";
 
-import type { NormalizedToolEvent } from "@akapulu/web-core";
+import type { NormalizedToolEvent } from "@akapulu/react";
 
 /**
  * Visual overrides for the styled prebuilt `react-ui` demo.

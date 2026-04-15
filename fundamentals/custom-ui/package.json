@@ -10,9 +10,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@akapulu/react": "^0.3.4",
-    "@akapulu/server": "^0.1.5",
-    "@akapulu/web-core": "^0.3.5",
+    "@akapulu/react": "^1.0.1",
+    "@akapulu/server": "^1.0.0",
     "@daily-co/daily-react": "^0.24.0",
     "lucide-react": "^1.7.0",
     "next": "^16.2.3",
