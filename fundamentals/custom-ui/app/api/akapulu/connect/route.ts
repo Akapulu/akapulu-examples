@@ -9,7 +9,7 @@ import { AkapuluApiError, createAkapuluServerClient } from "@akapulu/server";
 
 // Demo-only IDs — replace with your scenario and avatar from the dashboard.
 const SCENARIO_ID = "<scenario id here>";
-const AVATAR_ID = "d20e3ec3-b713-4e5e-aa5b-02f09031a339";
+const AVATAR_ID = "f77de1e5-6ce3-448c-8cff-a8cc3c8a50bf";
 
 export async function POST() {
   const client = createAkapuluServerClient();
