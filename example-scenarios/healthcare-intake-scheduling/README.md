@@ -60,6 +60,7 @@ Server file: `Flask Server/flask-server.py`
 Endpoint name: `Patient Intake Book Appointment`
 - Route: `POST /book-appointment`
 - Local port: `8080`
+- Handler description: `Accepts appointment booking details, logs request metadata, and returns a generated appointment confirmation id.`
 
 Run the Flask server:
 
