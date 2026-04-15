@@ -332,6 +332,11 @@ In your connect route, pass `scenario_id`, `avatar_id`, and runtime variables re
 return await akapulu.connectConversation({
   scenario_id: "<your-scenario-id>",
   avatar_id: "<your-avatar-id>",
+  stt_keywords: [
+    "medication",
+    "prescription",
+    "virtual",
+  ];,
   runtime_vars: {
     patient_id: "patient_001",
     today: new Date().toISOString().slice(0, 10),
