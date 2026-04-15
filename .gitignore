@@ -16,5 +16,4 @@ venv/
 
 example-scenarios/**/config.json
 example-scenarios/**/runtime-vars.ts
-
-markdown-generator.py
+example-scenarios/**/mintlify-docs.mdx
