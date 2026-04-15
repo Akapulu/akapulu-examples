@@ -33,9 +33,9 @@ flowchart TD
   node_2["appointment_booking"]
   node_3["qa"]
   node_4["end"]
-  node_0 --> node_1
-  node_1 --> node_2
   node_2 --> node_3
+  node_1 --> node_2
+  node_0 --> node_1
   node_3 --> node_4
 ```
 
