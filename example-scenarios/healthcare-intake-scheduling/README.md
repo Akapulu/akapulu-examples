@@ -33,10 +33,10 @@ flowchart TD
   node_2["appointment_booking"]
   node_3["qa"]
   node_4["end"]
-  node_0 -->|transition_to_data_intake| node_1
-  node_1 -->|transition_to_appointment_booking| node_2
-  node_2 -->|book_appointment| node_3
-  node_3 -->|transition_to_end_screening| node_4
+  node_0 --> node_1
+  node_1 --> node_2
+  node_2 --> node_3
+  node_3 --> node_4
 ```
 
 ## Secrets
