@@ -2,26 +2,32 @@
 
 ## Intro
 
-This example scenario shows how to run a full patient screening conversation that collects intake details, schedules an appointment, answers clinic questions, and then closes the session cleanly.
+This example scenario demonstrates how to run a full patient screening conversation that collects intake details, schedules an appointment, answers clinic questions, and then closes the session cleanly.
+
+The avatar will act as a friendly medical screening assistant that guides the patient through the screening process, with access to a vision tool to view the patient's symptoms on camera if requested, as well as a RAG tool for clinic details and an appointment booking tool to schedule the appointment.
 
 ## Scenario Overview
+
+The avatar's role instruction:
+
+> "You are a friendly and professional medical screening assistant..."
 
 The scenario is structured around the following node sequence:
 
 - `intro`
-  - Greet the patient warmly and introduce yourself as a medical screening assistant.
+  - "Greet the patient warmly and introduce yourself as a medical screening assistant..."
   - Uses `transition` tools.
 - `data_intake`
-  - Collect the patient's basic information.
+  - "Collect the patient's basic information..."
   - Uses `transition`, `vision` tools.
 - `appointment_booking`
-  - Help the patient schedule an appointment.
+  - "Help the patient schedule an appointment..."
   - Uses `http` tools.
 - `qa`
-  - Answer the patient's questions about the screening process, our clinic, or anything else they want to know.
+  - "Answer the patient's questions about the screening process, our clinic, or anything else they want to know..."
   - Uses `transition`, `rag` tools.
 - `end`
-  - Thank the patient for completing the screening.
+  - "Thank the patient for completing the screening..."
   - Ends the conversation after the assistant responds.
 
 ### Node Graph
@@ -213,7 +219,7 @@ Before creating the scenario, copy these IDs:
 1) Go to [akapulu.com/scenarios](https://akapulu.com/scenarios) and click **Create Scenario**.
 
 2) Enter a name for your scenario.
-Default name: `Healthcare Intake & Scheduling Demo`
+For example: `Healthcare Intake & Scheduling Demo`
 
 3) Click the **JSON** option in the nodes/json toggle.
 
@@ -312,7 +318,7 @@ This example expects the following runtime variables when you call the connect f
 
 ## Use in UI
 
-After your scenario is saved, integrate it in your own application using the Akapulu Web SDK.
+After your scenario is saved, [integrate it in your own application](https://docs.akapulu.com/guides/conversations/customize-conversation-ui) using the [Akapulu Web SDK](https://docs.akapulu.com/web-sdk/overview).
 
 This repository also includes demo applications built with the Web SDK under:
 
