@@ -1,5 +1,7 @@
 # Sales Roleplay Training
 
+[Read this example in our docs →](https://docs.akapulu.com/examples/scenarios/sales-roleplay-training)
+
 ## Intro
 
 This example scenario demonstrates how to run an AI-powered sales roleplay where the avatar plays a specific named prospect across a discovery call — intro, discovery, pitch, objection handling, and close — so the sales rep can practice the full flow end-to-end.
