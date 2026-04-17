@@ -16,6 +16,7 @@ akapulu-examples/
 
   example-scenarios/
     healthcare-intake-scheduling/
+    sales-roleplay-training/
 ```
 
 ## Examples
@@ -32,3 +33,6 @@ akapulu-examples/
 
 - `example-scenarios/healthcare-intake-scheduling`  
   Simulates a virtual front-desk conversation where a patient shares intake details, symptoms, and scheduling preferences. The flow then guides the patient into booking an appointment, an FAQ section, and then concludes the screening process.
+
+- `example-scenarios/sales-roleplay-training`  
+  Runs an AI-powered sales roleplay where the avatar plays a specific named prospect across a discovery call — intro, discovery, pitch, objection handling, and close — so the sales rep can practice the full flow end-to-end.
