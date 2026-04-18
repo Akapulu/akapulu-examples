@@ -17,7 +17,7 @@ The avatar's role instruction:
 The scenario is structured around the following node sequence:
 
 - `intro`
-  - "Respond to {{runtime.sales_rep_name}}'s greeting and let them know you are ready for the discovery call..."
+  - "Greet the sales rep courteously..."
   - Uses `transition` tools.
 - `discovery`
   - "Answer the rep's questions about your company, team, tools, and pain points honestly but without volunteering extra information..."
@@ -28,11 +28,11 @@ The scenario is structured around the following node sequence:
 - `objection`
   - "Raise objections one at a time from this list: {{runtime.objections}}..."
   - Uses `transition`, `transition` tools.
-- `close`
-  - "React to the rep's closing attempt and agree to a concrete next step only if they earn it..."
-  - Uses `transition` tools.
 - `no_sale`
   - "Politely decline to move forward, briefly referencing which of your close criteria were not met without being harsh..."
+  - Uses `transition` tools.
+- `close`
+  - "React to the rep's closing attempt and agree to a concrete next step."
   - Uses `transition` tools.
 - `end`
   - "Thank {{runtime.sales_rep_name}} for their time and sign off warmly, staying in character..."
@@ -46,15 +46,15 @@ flowchart TD
   node_1["discovery"]
   node_2["pitch"]
   node_3["objection"]
-  node_4["close"]
-  node_5["no_sale"]
+  node_4["no_sale"]
+  node_5["close"]
   node_6["end"]
-  node_4 --> node_6
+  node_5 --> node_6
   node_1 --> node_2
   node_0 --> node_1
-  node_5 --> node_6
-  node_3 --> node_4
+  node_4 --> node_6
   node_3 --> node_5
+  node_3 --> node_4
   node_2 --> node_3
 ```
 
@@ -63,7 +63,7 @@ flowchart TD
 1) Go to [akapulu.com/scenarios](https://akapulu.com/scenarios) and click **Create Scenario**.
 
 2) Enter a name for your scenario.
-For example: `Sales Roleplay Training Demo`
+For example: `Sales Roleplay Training`
 
 3) Click the **JSON** option in the nodes/json toggle.
 
@@ -86,7 +86,8 @@ Paste in the following JSON:
           "transition_to": "discovery"
         }
       ],
-      "task_instruction": "Respond to {{runtime.sales_rep_name}}'s greeting and let them know you are ready for the discovery call.\n\nBe friendly but let them drive the conversation. Keep your response to one sentence.\n\nUse the transition tool as soon as they begin asking their first real discovery question."
+      "task_instruction": "Greet the sales rep courteously. Be friendly but let them drive the conversation. Keep your response to one sentence.\n\nUse the transition tool as soon as they begin asking their first real discovery question.",
+      "respond_immediately": true
     },
     "discovery": {
       "functions": [
@@ -118,28 +119,18 @@ Paste in the following JSON:
           "name": "transition_to_close",
           "type": "transition",
           "description": "Use this when the rep's objection handling has met the close criteria.",
-          "transition_to": "close"
+          "transition_to": "close",
+          "require_reason": true
         },
         {
           "name": "transition_to_no_sale",
           "type": "transition",
           "description": "Use this after at least two objections when the rep has clearly failed to meet the close criteria.",
-          "transition_to": "no_sale"
+          "transition_to": "no_sale",
+          "require_reason": true
         }
       ],
-      "task_instruction": "Raise objections one at a time from this list: {{runtime.objections}}.\n\nPush back if the rep's response feels weak; if they handle it well, acknowledge it and raise the next one. Keep responses to one or two sentences.\n\nEvaluate the rep against these close criteria: {{runtime.close_criteria}}.\n\nIf they meet the criteria, transition to close; if they clearly fall short after at least two objections, transition to no_sale.",
-      "respond_immediately": true
-    },
-    "close": {
-      "functions": [
-        {
-          "name": "transition_to_end",
-          "type": "transition",
-          "description": "Use this after you and the rep have agreed on a concrete next step.",
-          "transition_to": "end"
-        }
-      ],
-      "task_instruction": "React to the rep's closing attempt and agree to a concrete next step only if they earn it.\n\nIf they ask for a follow-up call or trial, agree briefly. If they use pressure tactics, push back gently. Keep responses to one or two sentences.\n\nAfter agreeing on a next step or after 2 exchanges, use the transition tool to move to end.",
+      "task_instruction": "Raise objections one at a time from this list: {{runtime.objections}}.\n\nPush back if the rep's response feels weak; if they handle it well, acknowledge it and raise the next one. Keep responses to one or two sentences.\n\nEvaluate the rep against these close criteria: {{runtime.close_criteria}}.\n\nIf they meet the criteria, transition to close; if they clearly fall short after at least two objections, transition to no_sale.\n\nOnly call one of the tools - not both!",
       "respond_immediately": true
     },
     "no_sale": {
@@ -152,6 +143,18 @@ Paste in the following JSON:
         }
       ],
       "task_instruction": "Politely decline to move forward, briefly referencing which of your close criteria were not met without being harsh.\n\nStay warm and professional. Keep it to one or two sentences.\n\nUse the transition tool once the rep has acknowledged.",
+      "respond_immediately": true
+    },
+    "close": {
+      "functions": [
+        {
+          "name": "transition_to_end",
+          "type": "transition",
+          "description": "Use this after you and the rep have agreed on a concrete next step.",
+          "transition_to": "end"
+        }
+      ],
+      "task_instruction": "React to the rep's closing attempt and agree to a concrete next step.",
       "respond_immediately": true
     },
     "end": {
