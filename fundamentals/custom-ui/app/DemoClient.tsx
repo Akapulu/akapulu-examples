@@ -6,8 +6,8 @@
  * Flow:
  * 1. `AkapuluProvider` wires connect/updates to your API routes and joins the Daily room for media.
  * 2. `useAkapuluSession` drives lifecycle: idle → connecting (poll progress) → connected → ended/error.
- * 3. While connected, Daily hooks (`useDaily`, `useParticipantIds`, `useVideoTrack`) + `DailyVideo` render
- *    remote/local video; `useAkapuluMediaControls` toggles mic/cam on that same call.
+ * 3. While connected, Daily hooks (`useDaily`, `useAkapuluParticipantRoles`, `useVideoTrack`) + `DailyVideo` render
+ *    the assistant video, local PiP, and self-view fallback; `useAkapuluMediaControls` toggles mic/cam.
  * 4. Transcripts, node updates, and bot speaking state come from the session store; tool events use `useAkapuluEvents`.
  * 5. `AkapuluBotAudio` plays assistant audio (hidden element).
  */
@@ -20,10 +20,11 @@ import {
   AkapuluProvider,
   useAkapuluEvents,
   useAkapuluMediaControls,
+  useAkapuluParticipantRoles,
   useAkapuluSession,
 } from "@akapulu/react";
 import type { NormalizedToolEvent } from "@akapulu/react";
-import { DailyVideo, useDaily, useParticipantIds, useVideoTrack } from "@daily-co/daily-react";
+import { DailyVideo, useDaily, useVideoTrack } from "@daily-co/daily-react";
 import { Camera, CameraOff, Database, Eye, Globe, Mic, MicOff, PhoneOff } from "lucide-react";
 
 // =============================================================================
@@ -123,7 +124,7 @@ function CustomUiConversationDemo() {
   // Daily: participant lists (provider is inside AkapuluProvider)
   // ---------------------------------------------------------------------------
   const daily = useDaily();
-  const remoteParticipantIds = useParticipantIds({ filter: "remote" });
+  const { akapuluBotParticipantId } = useAkapuluParticipantRoles();
   const localParticipantId = daily?.participants()?.local?.session_id || "";
   const localParticipant = daily?.participants().local;
 
@@ -390,8 +391,8 @@ function CustomUiConversationDemo() {
           <div className="headlessVideoPane">
             <div className="headlessBotState">{botSpeakingState}</div>
 
-            {remoteParticipantIds.length > 0 ? (
-              <VideoTile id={remoteParticipantIds[0]} isLocal={false} />
+            {akapuluBotParticipantId !== "" ? (
+              <VideoTile id={akapuluBotParticipantId} isLocal={false} />
             ) : localParticipantId !== "" ? (
               <VideoTile id={localParticipantId} isLocal />
             ) : (

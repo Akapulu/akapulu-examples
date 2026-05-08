@@ -10,7 +10,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@akapulu/react": "^1.0.1",
+    "@akapulu/react": "^1.0.3",
     "@akapulu/server": "^1.0.0",
     "@daily-co/daily-react": "^0.24.0",
     "lucide-react": "^1.7.0",

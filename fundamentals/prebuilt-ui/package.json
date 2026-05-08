@@ -10,8 +10,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@akapulu/react": "^1.0.1",
-    "@akapulu/react-ui": "^1.0.1",
+    "@akapulu/react": "^1.0.3",
+    "@akapulu/react-ui": "^1.0.7",
     "@akapulu/server": "^1.0.0",
     "lucide-react": "^1.7.0",
     "next": "^16.2.3",
