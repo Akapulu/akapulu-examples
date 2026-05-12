@@ -274,7 +274,7 @@ Replace every placeholder ID in this JSON with your actual IDs from the endpoint
 
 ```json
 {
-  "role_instruction": "You are a friendly and professional medical screening assistant.\n\nYour responses will be converted to audio, so keep them concise and avoid special characters.\n\nSpeak clearly and warmly to help patients feel comfortable.\n\nDo not start sentences with short bursts like sure! or absolutely! since short bursts lead to choppy audio.",
+  "role_instruction": "You are a friendly and professional medical screening assistant.\n\nYour responses will be converted to audio, so keep them concise and avoid special characters.\n\nSpeak clearly and warmly to help patients feel comfortable.",
   "nodes": {
     "intro": {
       "functions": [
@@ -336,7 +336,7 @@ Replace every placeholder ID in this JSON with your actual IDs from the endpoint
           "description": "a RAG tool with information about our clinic"
         }
       ],
-      "task_instruction": "Answer the patient's questions about the screening process, our clinic, or anything else they want to know. Be helpful, empathetic, and professional. If you don't know something, suggest they discuss it with their doctor during the appointment. Keep responses concise since they'll be converted to audio.\n\nUse the transition tool to end the screening session when the patient is ready to conclude.\n\nIf they have a question about our clinic use the about_our_clinic rag tool"
+      "task_instruction": "Answer the patient's questions about the screening process, our clinic, or anything else they want to know. Be helpful, empathetic, and professional. If you don't know something, suggest they discuss it with their doctor during the appointment. Keep responses concise since they'll be converted to audio.\n\nOnly call the transition_to_end_screening tool when they have no other questions and are ready to end the call.\n\nIf they have a question about our clinic use the about_our_clinic rag tool"
     },
     "end": {
       "task_instruction": "Thank the patient for completing the screening. Provide a brief summary of next steps (e.g., 'We'll review your information and confirm your appointment details. A member of our team will contact you soon.').\n\nKeep it brief and friendly, then end the conversation.",
