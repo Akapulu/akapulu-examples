@@ -47,7 +47,7 @@ flowchart TD
 
 ## Secrets
 
-Create these secrets in the [Akapulu secrets tab](https://akapulu.com/secrets) before testing the endpoints in this example:
+Create these secrets in the [Akapulu Labs secrets tab](https://akapulu.com/secrets) before testing the endpoints in this example:
 
 - **Create secret `webhook_token`**
 
@@ -94,7 +94,7 @@ cd "Flask Server" && python flask-server.py
 
 ## ngrok Setup
 
-Your endpoints must be publicly reachable so Akapulu can call them during a live conversation. In production, you can host them on any platform you prefer.
+Your endpoints must be publicly reachable so Akapulu Labs can call them during a live conversation. In production, you can host them on any platform you prefer.
 
 For this demo, we use [ngrok](https://ngrok.com/docs/guides/share-localhost/quickstart) to create a public HTTPS URL that forwards to your local Flask server.
 
@@ -134,7 +134,7 @@ ngrok http 8080 --url https://<YOUR_NGROK_DOMAIN>
 
 This starts an ngrok public endpoint and securely forwards incoming requests to your local Flask server on port `8080`.
 
-Use that same ngrok domain in your Akapulu endpoint URL.
+Use that same ngrok domain in your Akapulu Labs endpoint URL.
 
 `https://<YOUR_NGROK_DOMAIN>/get-availability`
 
@@ -142,7 +142,7 @@ Use that same ngrok domain in your Akapulu endpoint URL.
 
 This scenario uses 2 [HTTP endpoint](https://docs.akapulu.com/guides/endpoints/create-endpoint) configurations.
 
-When configuring endpoint fields, we use Akapulu [templates and variable syntax](https://docs.akapulu.com/guides/endpoints/templates-and-variables) for runtime values and node context.
+When configuring endpoint fields, we use Akapulu Labs [templates and variable syntax](https://docs.akapulu.com/guides/endpoints/templates-and-variables) for runtime values and node context.
 
 ### Create the `Patient Intake Get Availability` endpoint
 
@@ -220,7 +220,7 @@ Go to [akapulu.com/endpoints](https://akapulu.com/endpoints), click **Create End
 
 ## Knowledge Bases
 
-This example uses an Akapulu [knowledge base](https://docs.akapulu.com/guides/knowledge-bases/overview) and a node-level [RAG tool](https://docs.akapulu.com/guides/scenarios/overview#create-the-rag-tool) so the assistant can answer questions from retrieved document context instead of guessing.
+This example uses an Akapulu Labs [knowledge base](https://docs.akapulu.com/guides/knowledge-bases/overview) and a node-level [RAG tool](https://docs.akapulu.com/guides/scenarios/overview#create-the-rag-tool) so the assistant can answer questions from retrieved document context instead of guessing.
 
 ### Create the knowledge base `Healthcare Intake Demo Knowledge Base`
 
@@ -365,7 +365,7 @@ This example expects the following runtime variables when you call the connect f
 
 ## Use in UI
 
-After your scenario is saved, [integrate it in your own application](https://docs.akapulu.com/guides/conversations/customize-conversation-ui) using the [Akapulu Web SDK](https://docs.akapulu.com/web-sdk/overview).
+After your scenario is saved, [integrate it in your own application](https://docs.akapulu.com/guides/conversations/customize-conversation-ui) using the [Akapulu Labs Web SDK](https://docs.akapulu.com/web-sdk/overview).
 
 This repository also includes demo applications built with the Web SDK under:
 

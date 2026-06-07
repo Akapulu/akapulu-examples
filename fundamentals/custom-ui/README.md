@@ -12,7 +12,7 @@ You build the call surface yourself: video tiles, mic/camera/end controls, trans
 npm install
 ```
 
-### 2) Add your Akapulu API key
+### 2) Add your Akapulu Labs API key
 
 ```bash
 cp .env.example .env.local
@@ -26,7 +26,7 @@ AKAPULU_API_KEY=your_api_key_here
 
 ### 3) Create a scenario
 
-Create a [scenario](https://docs.akapulu.com/guides/scenarios/overview) in the Akapulu dashboard and copy the scenario UUID.
+Create a [scenario](https://docs.akapulu.com/guides/scenarios/overview) in the Akapulu Labs dashboard and copy the scenario UUID.
 
 ### 4) Set scenario ID in connect route
 

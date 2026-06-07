@@ -201,7 +201,7 @@ This example expects the following runtime variables when you call the connect f
 
 ## Use in UI
 
-After your scenario is saved, [integrate it in your own application](https://docs.akapulu.com/guides/conversations/customize-conversation-ui) using the [Akapulu Web SDK](https://docs.akapulu.com/web-sdk/overview).
+After your scenario is saved, [integrate it in your own application](https://docs.akapulu.com/guides/conversations/customize-conversation-ui) using the [Akapulu Labs Web SDK](https://docs.akapulu.com/web-sdk/overview).
 
 This repository also includes demo applications built with the Web SDK under:
 

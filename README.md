@@ -1,8 +1,8 @@
-# Akapulu Examples
+# Akapulu Labs Examples
 
-<img src="logo.png" alt="Akapulu" width="96" />
+<img src="logo.png" alt="Akapulu Labs" width="96" />
 
-Practical examples for building with Akapulu.
+Practical examples for building with Akapulu Labs.
 
 ## File tree
 
@@ -28,7 +28,7 @@ akapulu-examples/
 
 - `fundamentals/custom-ui`  
 
-  Shows a more customizable path using Akapulu hooks instead of the full prebuilt conversation component. This example gives you tighter control over layout, transcript rendering, and in-call controls.
+  Shows a more customizable path using Akapulu Labs hooks instead of the full prebuilt conversation component. This example gives you tighter control over layout, transcript rendering, and in-call controls.
 ### example-scenarios
 
 - `example-scenarios/healthcare-intake-scheduling`  

@@ -1,6 +1,6 @@
 # prebuilt-ui
 
-Sample app for Akapulu’s prebuilt conversation UI (`@akapulu/react-ui` / `AkapuluConversation`) with server-side API routing (`@akapulu/server`).
+Sample app for the Akapulu Labs prebuilt conversation UI (`@akapulu/react-ui` / `AkapuluConversation`) with server-side API routing (`@akapulu/server`).
 
 This project includes two variants so you can compare side by side:
 
@@ -19,7 +19,7 @@ Install dependencies:
 npm install
 ```
 
-### 2) Add your Akapulu API key
+### 2) Add your Akapulu Labs API key
 
 Copy env file:
 
@@ -35,7 +35,7 @@ AKAPULU_API_KEY=your_api_key_here
 
 ### 3) Create a scenario
 
-Create a [scenario](https://docs.akapulu.com/guides/scenarios/overview) in the Akapulu dashboard and copy the scenario UUID.
+Create a [scenario](https://docs.akapulu.com/guides/scenarios/overview) in the Akapulu Labs dashboard and copy the scenario UUID.
 
 ### 4) Configure and run **Default** (`/default`)
 
