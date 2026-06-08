@@ -10,7 +10,7 @@ import { AkapuluApiError, createAkapuluServerClient } from "@akapulu/server";
 /* AKAPULU_CONNECT_PAYLOAD_START */
 const connectPayload = {
   scenario_id: "<scenario id here>",
-  avatar_id: "f77de1e5-6ce3-448c-8cff-a8cc3c8a50bf",
+  avatar_id: "59488098-9e06-4dfa-9a90-03bd6c7fbddd",
   runtime_vars: {},
   record_conversation: true,
 };
