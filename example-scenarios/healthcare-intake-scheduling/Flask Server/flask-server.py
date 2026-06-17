@@ -24,9 +24,9 @@ def get_availability():
     preferred_date = body.get("preferred_date") or datetime.utcnow().date().isoformat()
     appointment_type = body.get("appointment_type") or "new_consult"
     slots = [
-        {"date": preferred_date, "time": "09:00", "appointment_type": appointment_type},
-        {"date": preferred_date, "time": "13:30", "appointment_type": appointment_type},
-        {"date": preferred_date, "time": "16:45", "appointment_type": appointment_type},
+        {"date": preferred_date, "time": "9 AM", "appointment_type": appointment_type},
+        {"date": preferred_date, "time": "1:30 PM", "appointment_type": appointment_type},
+        {"date": preferred_date, "time": "4:45 PM", "appointment_type": appointment_type},
     ]
     return jsonify(
         {
