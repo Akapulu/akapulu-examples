@@ -184,19 +184,19 @@ This example expects the following runtime variables when you call the connect f
 - `objections`
 - `close_criteria`
 
-```ts
+```json
 {
-  prospect_name: "Sarah Chen",
-  prospect_role: "VP of Sales",
-  prospect_company: "Meridian Technologies",
-  prospect_company_size: "a mid-size tech company with 200 employees",
-  annual_tool_budget: "$50,000",
-  pain_points: "slow onboarding of new engineers, fragmented tooling across teams, and weak reporting/visibility for leadership",
-  sales_rep_name: "Alex",
-  sales_rep_company: "Acme Sales Co",
-  objections: "the price seems high for what you would get; you are already using a competitor and switching is a pain; you would need to run this by your CEO before committing",
-  close_criteria: "The rep must demonstrate clear ROI within 6 months, address the switching-cost concern with a concrete migration plan, and offer a paid pilot before any full commitment.",
-};
+  "prospect_name": "Sarah Chen",
+  "prospect_role": "VP of Sales",
+  "prospect_company": "Meridian Technologies",
+  "prospect_company_size": "a mid-size tech company with 200 employees",
+  "annual_tool_budget": "$50,000",
+  "pain_points": "slow onboarding of new engineers, fragmented tooling across teams, and weak reporting/visibility for leadership",
+  "sales_rep_name": "Alex",
+  "sales_rep_company": "Acme Sales Co",
+  "objections": "the price seems high for what you would get; you are already using a competitor and switching is a pain; you would need to run this by your CEO before committing",
+  "close_criteria": "The rep must demonstrate clear ROI within 6 months, address the switching-cost concern with a concrete migration plan, and offer a paid pilot before any full commitment."
+}
 ```
 
 ## Use in UI
