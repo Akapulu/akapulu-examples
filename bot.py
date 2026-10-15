@@ -30,6 +30,11 @@ SAMPLE_RATE = 24000
 SETUP_TIMEOUT_SECS = 180.0
 USER_JOIN_TIMEOUT_SECS = 180.0
 BACKEND_MODEL = "gpt-5.4-mini"
+SPOKEN_INSTRUCTION = (
+    "You are a voice assistant on a short test call. "
+    "Say one short sentence, then wait."
+)
+GREETING_CUE = "Say one short sentence now, then wait."
 
 
 def _required(name: str) -> str:
@@ -111,11 +116,7 @@ async def run_bot(room_url: str, token: str, session_id: str) -> None:
     llm = OpenAILiveLLMService(
         api_key=_required("OPENAI_API_KEY"),
         settings=OpenAILiveLLMService.Settings(
-            system_instruction=(
-                "You are a helpful assistant in a voice conversation. "
-                "Your responses will be spoken aloud, so avoid emojis and markdown. "
-                "Respond briefly."
-            ),
+            system_instruction=SPOKEN_INSTRUCTION,
             voice="marin",
         ),
         delegation=OpenAILiveLLMService.ResponsesDelegation(
@@ -129,9 +130,7 @@ async def run_bot(room_url: str, token: str, session_id: str) -> None:
         ),
     )
     avatar = AkapuluAvatar(sample_rate=SAMPLE_RATE, session_id=session_id)
-    context = LLMContext(
-        [{"role": "developer", "content": "Greet the user and ask how you can help."}]
-    )
+    context = LLMContext([{"role": "developer", "content": GREETING_CUE}])
     user_aggregator, assistant_aggregator = LLMContextAggregatorPair(
         context,
         user_params=LLMUserAggregatorParams(

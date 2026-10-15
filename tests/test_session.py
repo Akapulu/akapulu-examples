@@ -6,7 +6,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 import session
-from bot import microphone_subscriptions
+from bot import GREETING_CUE, SPOKEN_INSTRUCTION, microphone_subscriptions
 
 
 def test_api_origin():
@@ -40,6 +40,11 @@ def test_show_ai_label_and_body():
         raise AssertionError("avatar id accepted a name")
 
 
+def test_speaks_first():
+    assert "Say one short sentence, then wait." in SPOKEN_INSTRUCTION
+    assert GREETING_CUE == "Say one short sentence now, then wait."
+
+
 def test_microphone_subscriptions():
     settings = microphone_subscriptions(
         {
@@ -56,5 +61,6 @@ def test_microphone_subscriptions():
 if __name__ == "__main__":
     test_api_origin()
     test_show_ai_label_and_body()
+    test_speaks_first()
     test_microphone_subscriptions()
     print("ok")
