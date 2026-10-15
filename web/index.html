@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Akapulu GPT Live</title>
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+  <body>
+    <main>
+      <header>
+        <p class="eyebrow">Akapulu</p>
+        <h1>GPT Live</h1>
+        <p class="lede">
+          Start a call. This page joins the Daily room. OpenAI Live speaks, and
+          the Akapulu worker publishes the face and the played audio.
+        </p>
+      </header>
+      <section class="stage" aria-live="polite">
+        <video id="avatar" playsinline autoplay></video>
+        <p id="status">Ready</p>
+      </section>
+      <div class="actions">
+        <button id="start" type="button">Start call</button>
+        <button id="end" type="button" disabled>End call</button>
+      </div>
+      <ol id="transcript"></ol>
+    </main>
+    <script type="module" src="/static/app.js"></script>
+  </body>
+</html>

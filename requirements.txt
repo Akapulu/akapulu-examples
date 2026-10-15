@@ -1,0 +1,2 @@
+pipecat-ai[daily]==1.12.0
+pipecat-akapulu==0.1.0
