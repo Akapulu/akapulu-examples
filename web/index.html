@@ -7,25 +7,35 @@
     <link rel="stylesheet" href="/static/style.css" />
   </head>
   <body>
-    <main>
-      <header>
-        <p class="eyebrow">Akapulu</p>
-        <h1>GPT Live</h1>
-        <p class="lede">
-          Start a call. This page joins the Daily room. OpenAI Live speaks, and
-          the Akapulu worker publishes the face and the played audio.
-        </p>
-      </header>
-      <section class="stage" aria-live="polite">
-        <video id="avatar" playsinline autoplay></video>
-        <p id="status">Ready</p>
-      </section>
-      <div class="actions">
-        <button id="start" type="button">Start call</button>
-        <button id="end" type="button" disabled>End call</button>
+    <div id="app" class="live-call is-idle">
+      <div id="banner" class="live-call-banner" hidden role="status"></div>
+      <div class="live-call-main">
+        <section class="live-call-transcript">
+          <h2>Transcript</h2>
+          <p id="empty" class="live-call-empty">The conversation shows up here.</p>
+          <ol id="transcript"></ol>
+        </section>
+        <section class="live-call-stage">
+          <h1>GPT Live</h1>
+          <div class="live-call-screen">
+            <video id="avatar" class="live-call-avatar" playsinline autoplay></video>
+            <div id="loading" class="live-call-loading" hidden role="status" aria-label="Loading the avatar">
+              <span></span>
+              <div class="live-call-progress">
+                <div class="live-call-track">
+                  <div id="fill" class="live-call-fill" style="width: 0%"></div>
+                </div>
+                <p id="status">Ready</p>
+              </div>
+            </div>
+          </div>
+          <div class="live-call-actions">
+            <button id="start" type="button">Start Call</button>
+            <button id="end" class="is-hangup" type="button" disabled>End call</button>
+          </div>
+        </section>
       </div>
-      <ol id="transcript"></ol>
-    </main>
+    </div>
     <script type="module" src="/static/app.js"></script>
   </body>
 </html>
