@@ -1,35 +1,57 @@
 import Daily from "https://cdn.jsdelivr.net/npm/@daily-co/daily-js@0.93.0/+esm";
 
+const app = document.querySelector("#app");
+const banner = document.querySelector("#banner");
 const video = document.querySelector("#avatar");
 const status = document.querySelector("#status");
+const fill = document.querySelector("#fill");
+const loading = document.querySelector("#loading");
+const empty = document.querySelector("#empty");
 const transcript = document.querySelector("#transcript");
 const startButton = document.querySelector("#start");
 const endButton = document.querySelector("#end");
 
 let call = null;
 let audio = null;
+let callReady = false;
+
+function setPhase(phase) {
+  app.className = `live-call is-${phase}`;
+}
+
+function showBanner(text) {
+  banner.hidden = !text;
+  banner.textContent = text || "";
+}
+
+function setLoading(visible) {
+  loading.hidden = !visible;
+}
 
 function setStatus(text) {
   status.textContent = text;
 }
 
+function setPercent(value) {
+  const percent = Math.max(0, Math.min(100, Number(value) || 0));
+  fill.style.width = `${percent}%`;
+}
+
 function line(who, text, pending) {
+  empty.hidden = true;
   const last = transcript.lastElementChild;
   if (last && last.dataset.who === who && last.dataset.pending === "true") {
-    last.querySelector("span:last-child").textContent = text;
+    last.textContent = text;
     last.dataset.pending = pending ? "true" : "false";
     return;
   }
   const item = document.createElement("li");
   item.dataset.who = who;
   item.dataset.pending = pending ? "true" : "false";
-  const label = document.createElement("span");
-  label.className = "who";
-  label.textContent = who;
-  const body = document.createElement("span");
-  body.textContent = text;
-  item.append(label, body);
+  item.className = who === "You" ? "is-user" : "is-bot";
+  item.textContent = text;
   transcript.append(item);
+  transcript.scrollTop = transcript.scrollHeight;
 }
 
 function statusBody(message) {
@@ -47,10 +69,18 @@ function onAppMessage(event) {
   const message = event && event.data ? event.data : event;
   const body = statusBody(message);
   if (body) {
-    const percent = body.completion_percent;
+    if (typeof body.completion_percent === "number") {
+      setPercent(body.completion_percent);
+    }
     const text = body.latest_update_text;
     if (typeof text === "string" && text) {
-      setStatus(typeof percent === "number" ? `${percent}% ${text}` : text);
+      setStatus(text);
+    }
+    if (body.call_is_ready === true) {
+      callReady = true;
+      setPercent(100);
+      setLoading(false);
+      setStatus("Connected");
     }
     return;
   }
@@ -77,6 +107,9 @@ function onTrackStarted(event) {
     video.play().catch(() => {
       setStatus("Select the page to play the video.");
     });
+    if (callReady) {
+      setLoading(false);
+    }
   }
   if (event.track.kind === "audio") {
     if (!audio) {
@@ -93,8 +126,11 @@ function onTrackStarted(event) {
 async function endCall() {
   const current = call;
   call = null;
+  callReady = false;
   startButton.disabled = false;
   endButton.disabled = true;
+  setLoading(false);
+  setPhase("ended");
   if (current) {
     await current.leave();
     current.destroy();
@@ -104,10 +140,17 @@ async function endCall() {
     audio.srcObject = null;
   }
   setStatus("Call ended");
+  showBanner("");
 }
 
 async function startCall() {
   startButton.disabled = true;
+  endButton.disabled = true;
+  callReady = false;
+  setPhase("connecting");
+  showBanner("");
+  setLoading(true);
+  setPercent(0);
   setStatus("Opening the room…");
   const response = await fetch("/session", {
     method: "POST",
@@ -122,17 +165,26 @@ async function startCall() {
   }
   if (!response.ok || !body || typeof body !== "object") {
     const message = body && typeof body.error === "string" ? body.error : `Connect failed (${response.status}).`;
+    setPhase("error");
+    showBanner(message);
     setStatus(message);
+    setLoading(false);
     startButton.disabled = false;
     return;
   }
   if (typeof body.room_url !== "string" || !body.room_url.startsWith("https://")) {
+    setPhase("error");
+    showBanner("Connect did not return a room url.");
     setStatus("Connect did not return a room url.");
+    setLoading(false);
     startButton.disabled = false;
     return;
   }
   if (typeof body.token !== "string" || !body.token) {
+    setPhase("error");
+    showBanner("Connect did not return a token.");
     setStatus("Connect did not return a token.");
+    setLoading(false);
     startButton.disabled = false;
     return;
   }
@@ -146,6 +198,7 @@ async function startCall() {
   call.on("left-meeting", () => {
     startButton.disabled = false;
     endButton.disabled = true;
+    setLoading(false);
   });
   try {
     await call.join({
@@ -156,23 +209,34 @@ async function startCall() {
       startAudioOff: false,
     });
   } catch (error) {
-    setStatus(error instanceof Error ? error.message : "Daily join failed.");
+    const message = error instanceof Error ? error.message : "Daily join failed.";
+    setPhase("error");
+    showBanner(message);
+    setStatus(message);
     await endCall();
     return;
   }
   endButton.disabled = false;
+  setPhase("connected");
   setStatus("Joining the call…");
 }
 
 startButton.addEventListener("click", () => {
   startCall().catch((error) => {
-    setStatus(error instanceof Error ? error.message : "Start failed.");
+    const message = error instanceof Error ? error.message : "Start failed.";
+    setPhase("error");
+    showBanner(message);
+    setStatus(message);
+    setLoading(false);
     startButton.disabled = false;
   });
 });
 
 endButton.addEventListener("click", () => {
   endCall().catch((error) => {
-    setStatus(error instanceof Error ? error.message : "End failed.");
+    const message = error instanceof Error ? error.message : "End failed.";
+    setPhase("error");
+    showBanner(message);
+    setStatus(message);
   });
 });
