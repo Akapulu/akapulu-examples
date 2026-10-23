@@ -211,8 +211,15 @@ async def run_bot(room_url: str, token: str, session_id: str) -> None:
         await enforce_microphone_subscriptions()
 
     @transport.event_handler("on_client_disconnected")
-    async def on_client_disconnected(_transport, _participant):
-        logger.info("Daily participant left")
+    async def on_client_disconnected(_transport, participant):
+        # Avatar can leave on a worker fault. Only the browser ending the call
+        # should stop this bot.
+        if not isinstance(participant, dict):
+            raise RuntimeError("Daily participant is not an object")
+        name = _daily_user_name(participant)
+        logger.info("Daily participant left {}", name)
+        if name != USER_NAME:
+            return
         await runner.cancel()
 
     async def leave_if_alone() -> None:
