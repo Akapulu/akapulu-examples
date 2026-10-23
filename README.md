@@ -18,7 +18,7 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Copy `.env.example` to `.env` and set `DAILY_API_KEY`, `AKAPULU_API_KEY`, `AKAPULU_AVATAR_ID`, `AKAPULU_SHOW_AI_LABEL` (`true` or `false`), and `OPENAI_API_KEY`. `AKAPULU_API_URL` is optional. Unset, the server and the bot use `https://akapulu.com`.
+Copy `.env.example` to `.env` and set `DAILY_API_KEY`, `AKAPULU_API_KEY`, and `OPENAI_API_KEY`. The example uses Clara, leaves **This is AI** off, and calls the Akapulu Labs production API.
 
 ```bash
 python server.py

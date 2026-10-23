@@ -2,6 +2,9 @@
 
 The browser token joins as You. The avatar token joins as Avatar. The bot
 token is an owner token and does not set a Daily user name.
+
+Avatar, This is AI, and the Akapulu Labs API origin are fixed for this example.
+Set DAILY_API_KEY, AKAPULU_API_KEY, and OPENAI_API_KEY.
 """
 
 import json
@@ -21,7 +24,10 @@ from pipecat.transports.daily.utils import (
 ROOM_TTL_SECS = 2 * 60 * 60
 USER_NAME = "You"
 AVATAR_NAME = "Avatar"
-_PROD_API_ORIGIN = "https://akapulu.com"
+# Clara (public catalog). This is AI off.
+AVATAR_ID = "1f777f64-3758-4a7d-9cbc-c64ae654f7d1"
+SHOW_AI_LABEL = False
+AKAPULU_API_ORIGIN = "https://akapulu.com"
 _DAILY_API = "https://api.daily.co/v1"
 
 
@@ -32,29 +38,15 @@ def required(name: str) -> str:
     return value.strip()
 
 
-def api_origin(raw: str | None) -> str:
-    """API origin. Unset uses production. A set value must be http(s)."""
+def api_origin() -> str:
+    """Production by default. AKAPULU_API_URL overrides for harnesses."""
+    raw = os.environ.get("AKAPULU_API_URL")
     if raw is None:
-        return _PROD_API_ORIGIN
+        return AKAPULU_API_ORIGIN
     origin = raw.strip().rstrip("/")
     if not (origin.startswith("https://") or origin.startswith("http://")):
         raise RuntimeError("AKAPULU_API_URL must be an http(s) origin")
     return origin
-
-
-def show_ai_label(value: str) -> bool:
-    if value == "true":
-        return True
-    if value == "false":
-        return False
-    raise RuntimeError("AKAPULU_SHOW_AI_LABEL must be true or false")
-
-
-def parse_avatar_id(value: str) -> str:
-    try:
-        return str(uuid.UUID(value))
-    except ValueError as exc:
-        raise RuntimeError("AKAPULU_AVATAR_ID must be a UUID") from exc
 
 
 def daily_api_url(raw: str | None) -> str:
@@ -68,20 +60,16 @@ def daily_api_url(raw: str | None) -> str:
 
 def live_session_body(
     *,
-    avatar: str,
-    label: bool,
     room_url: str,
     avatar_token: str,
 ) -> dict:
-    if not isinstance(label, bool):
-        raise RuntimeError("show_ai_label must be a boolean")
     if not isinstance(room_url, str) or not room_url.startswith("https://"):
         raise RuntimeError("Daily room url is missing")
     if not isinstance(avatar_token, str) or not avatar_token:
         raise RuntimeError("Daily avatar token is missing")
     return {
-        "avatar_id": parse_avatar_id(avatar),
-        "show_ai_label": label,
+        "avatar_id": AVATAR_ID,
+        "show_ai_label": SHOW_AI_LABEL,
         "room_url": room_url,
         "avatar_token": avatar_token,
     }
@@ -103,9 +91,7 @@ async def create_call(http: aiohttp.ClientSession) -> tuple[str, str, str, str]:
     """Return room_url, bot token, browser token, and Akapulu session id."""
     daily_key = required("DAILY_API_KEY")
     akapulu_key = required("AKAPULU_API_KEY")
-    avatar = parse_avatar_id(required("AKAPULU_AVATAR_ID"))
-    label = show_ai_label(required("AKAPULU_SHOW_AI_LABEL"))
-    origin = api_origin(os.environ.get("AKAPULU_API_URL"))
+    origin = api_origin()
     rest = DailyRESTHelper(
         daily_api_key=daily_key,
         daily_api_url=daily_api_url(os.environ.get("DAILY_API_URL")),
@@ -156,8 +142,6 @@ async def create_call(http: aiohttp.ClientSession) -> tuple[str, str, str, str]:
         ),
     )
     body = live_session_body(
-        avatar=avatar,
-        label=label,
         room_url=room_url,
         avatar_token=avatar_token,
     )
