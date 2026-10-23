@@ -16,7 +16,7 @@ One process (`server.py`) serves the page and starts the call.
 
 The bot is OpenAI Live (`gpt-live-1`, voice `marin`) with a Responses backend (`gpt-5.4-mini`). It listens only to the browser microphone. When the browser joins, the bot speaks first: one short sentence, then it waits.
 
-Tested with Pipecat 1.12.0 and `pipecat-akapulu` 0.1.0.
+Tested with Pipecat 1.12.0 and `pipecat-akapulu` 0.1.4.
 
 ## Run
 
