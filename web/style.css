@@ -2,6 +2,7 @@ html,
 body {
   height: 100%;
   margin: 0;
+  overflow: hidden;
 }
 
 .live-call {
@@ -9,7 +10,9 @@ body {
   --muted: #a7a39a;
   --line: rgba(244, 241, 234, 0.14);
   width: 100%;
-  min-height: 100vh;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
   color: var(--ink);
   font-family: ui-sans-serif, "Avenir Next", "Segoe UI", sans-serif;
   background:
@@ -39,21 +42,24 @@ body {
 
 .live-call-main {
   width: min(72rem, calc(100% - 2rem));
+  height: 100%;
   margin: 0 auto;
-  padding: 1.5rem 0 2rem;
+  padding: 1.5rem 0 1.5rem;
+  box-sizing: border-box;
   display: grid;
   grid-template-columns: minmax(18rem, 24rem) minmax(0, 1fr);
   gap: 2rem;
-  align-items: start;
+  align-items: stretch;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .live-call-transcript {
-  height: calc(100vh - 3rem);
-  position: sticky;
-  top: 1.5rem;
+  height: 100%;
   display: flex;
   flex-direction: column;
   min-height: 0;
+  overflow: hidden;
   border-right: 1px solid var(--line);
   padding-right: 1.25rem;
 }
@@ -105,7 +111,10 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 1rem;
+  justify-content: center;
+  min-height: 0;
+  overflow: hidden;
+  padding-top: 0.5rem;
 }
 
 .live-call-stage h1 {
@@ -117,12 +126,14 @@ body {
 .live-call-screen {
   position: relative;
   width: 100%;
+  max-height: min(56vh, calc(100% - 7rem));
   aspect-ratio: 16 / 9;
   border-radius: 1.1rem;
   overflow: hidden;
   background: #07080a;
   box-shadow: inset 0 0 0 1px var(--line);
   margin-bottom: 1.2rem;
+  flex: 0 1 auto;
 }
 
 .live-call-avatar {
@@ -219,6 +230,9 @@ body {
 @media (max-width: 860px) {
   .live-call-main {
     grid-template-columns: 1fr;
+    grid-template-rows: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    gap: 1rem;
+    padding: 1rem 0;
   }
 
   .live-call-stage {
@@ -227,12 +241,14 @@ body {
 
   .live-call-transcript {
     grid-row: 2;
-    height: 50vh;
-    position: static;
     border-right: 0;
     border-top: 1px solid var(--line);
     padding-right: 0;
     padding-top: 1rem;
+  }
+
+  .live-call-screen {
+    max-height: none;
   }
 }
 
