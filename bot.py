@@ -129,7 +129,7 @@ async def run_bot(room_url: str, token: str, session_id: str) -> None:
             ),
         ),
     )
-    avatar = AkapuluAvatar(sample_rate=SAMPLE_RATE, session_id=session_id)
+    avatar = AkapuluAvatar(session_id=session_id)
     context = LLMContext([{"role": "developer", "content": GREETING_CUE}])
     user_aggregator, assistant_aggregator = LLMContextAggregatorPair(
         context,
