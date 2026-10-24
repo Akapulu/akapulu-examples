@@ -1,2 +1,2 @@
-pipecat-ai[daily]==1.12.0
-pipecat-akapulu==0.1.4
+pipecat-ai[daily]==1.14.0
+pipecat-akapulu==0.1.6
