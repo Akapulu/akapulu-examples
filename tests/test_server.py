@@ -22,7 +22,8 @@ async def _run() -> None:
         page = await client.get("/")
         assert page.status == 200
         html = await page.text()
-        assert "GPT Live" in html
+        assert "Akapulu" in html
+        assert "GPT Live" not in html
         script = await client.get("/static/app.js")
         assert script.status == 200
         started = await client.post("/session", json={})

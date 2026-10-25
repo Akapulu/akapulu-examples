@@ -1,4 +1,4 @@
-"""Local page and one GPT Live call.
+"""Local page and one voice call.
 
 GET / serves the page. POST /session creates the Daily room and the Akapulu
 session, starts the bot, and returns the browser token. The server listens
@@ -53,7 +53,7 @@ async def start_session(request: web.Request) -> web.Response:
                 return
             exc = done.exception()
             if exc is not None:
-                logger.error("GPT Live bot failed: {}", exc)
+                logger.error("voice bot failed: {}", exc)
 
         bot_task.add_done_callback(_finished)
         request.app["bot_task"] = bot_task

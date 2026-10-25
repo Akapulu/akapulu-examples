@@ -1,6 +1,6 @@
 # akapulu-examples
 
-Local Akapulu Labs example: a small Python server, a browser page, and a GPT Live voice bot with [pipecat-akapulu](https://github.com/Akapulu/pipecat-akapulu).
+Local Akapulu Labs example: a small Python server, a browser page, and a voice bot with [pipecat-akapulu](https://github.com/Akapulu/pipecat-akapulu).
 
 ## How it works
 
@@ -14,7 +14,7 @@ One process (`server.py`) serves the page and starts the call.
 
 `AkapuluAvatar` runs inside the voice bot and sends assistant audio to the worker.
 
-The bot is OpenAI Live (`gpt-live-1`, voice `marin`) with a Responses backend (`gpt-5.4-mini`). It listens only to the browser microphone. When the browser joins, the bot speaks first: one short sentence, then it waits.
+Deepgram Flux (`flux-general-multi`) hears the caller and takes the turn. OpenAI `gpt-5.4-mini` speaks, with reasoning off. Cartesia Sonic 3.6 speaks each finished sentence, with the buffer delay at 0, using the Ariana voice `ec1e269e-9ca0-402f-8a18-58e0e022355a`. The first committed turn locks that language on Flux and on Sonic. The bot listens only to the browser microphone. When the browser joins, the bot speaks first: one short sentence, then it waits.
 
 Tested with Pipecat 1.14.0 and `pipecat-akapulu` 0.1.6.
 
@@ -31,6 +31,8 @@ Copy `.env.example` to `.env` and set:
 - `DAILY_API_KEY`
 - `AKAPULU_API_KEY`
 - `OPENAI_API_KEY`
+- `DEEPGRAM_API_KEY`
+- `CARTESIA_API_KEY`
 
 The example uses Clara, leaves **This is AI** off, and calls the Akapulu Labs production API.
 
@@ -44,7 +46,7 @@ Open http://127.0.0.1:7860 and choose **Start call**. The server handles one cal
 
 ## Layout
 
-- `server.py` — local HTTP app (`GET /`, `POST /session`)
-- `session.py` — Daily room + tokens + Akapulu Labs live-session
-- `bot.py` — Pipecat voice bot (OpenAI Live + `AkapuluAvatar`)
-- `web/` — static page (`index.html`, `app.js`, `style.css`)
+- `server.py`: local HTTP app (`GET /`, `POST /session`)
+- `session.py`: Daily room + tokens + Akapulu Labs live-session
+- `bot.py`: Pipecat voice bot (Deepgram Flux, OpenAI, Cartesia Sonic, `AkapuluAvatar`)
+- `web/`: static page (`index.html`, `app.js`, `style.css`)

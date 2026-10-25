@@ -1,2 +1,2 @@
-pipecat-ai[daily]==1.14.0
+pipecat-ai[daily,deepgram,openai,cartesia]==1.14.0
 pipecat-akapulu==0.1.6
