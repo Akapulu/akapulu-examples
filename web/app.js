@@ -80,7 +80,10 @@ function onAppMessage(event) {
       callReady = true;
       setPercent(100);
       setLoading(false);
-      setStatus("Connected");
+      if (app.classList.contains("is-connecting")) {
+        setStatus("Connected");
+        setPhase("connected");
+      }
     }
     return;
   }
@@ -217,7 +220,6 @@ async function startCall() {
     return;
   }
   endButton.disabled = false;
-  setPhase("connected");
   setStatus("Joining the call…");
 }
 
