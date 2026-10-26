@@ -14,7 +14,7 @@ One process (`server.py`) serves the page and starts the call.
 
 `AkapuluAvatar` runs inside the voice bot and sends assistant audio to the worker.
 
-Deepgram Flux (`flux-general-multi`) hears the caller and takes the turn. OpenAI `gpt-5.4-mini` speaks, with reasoning off. Cartesia Sonic 3.6 speaks each finished sentence, with the buffer delay at 0, using the Ariana voice `ec1e269e-9ca0-402f-8a18-58e0e022355a`. The first committed turn locks that language on Flux and on Sonic. The bot listens only to the browser microphone. When the browser joins, the bot speaks first in one or two sentences. The transcript stays hidden until the avatar is ready.
+Deepgram Flux (`flux-general-multi`) hears the caller and takes the turn. OpenAI `gpt-5.4-mini` speaks, with reasoning off. Cartesia Sonic 3.6 speaks each finished sentence, with the buffer delay at 0, using the Ariana voice `ec1e269e-9ca0-402f-8a18-58e0e022355a`. The first committed turn locks that language on Flux and on Sonic. The bot listens only to the browser microphone. When the browser joins, the bot speaks first in one or two sentences. The transcript pane stays up, and the words stay out of it until the avatar is ready.
 
 Tested with Pipecat 1.14.0 and `pipecat-akapulu` 0.1.6.
 

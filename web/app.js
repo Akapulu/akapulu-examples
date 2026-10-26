@@ -14,6 +14,7 @@ const endButton = document.querySelector("#end");
 let call = null;
 let audio = null;
 let callReady = false;
+const heldLines = [];
 
 function setPhase(phase) {
   app.className = `live-call is-${phase}`;
@@ -37,7 +38,7 @@ function setPercent(value) {
   fill.style.width = `${percent}%`;
 }
 
-function line(who, text, pending) {
+function paintLine(who, text, pending) {
   empty.hidden = true;
   const last = transcript.lastElementChild;
   if (last && last.dataset.who === who && last.dataset.pending === "true") {
@@ -52,6 +53,37 @@ function line(who, text, pending) {
   item.textContent = text;
   transcript.append(item);
   transcript.scrollTop = transcript.scrollHeight;
+}
+
+function holdLine(who, text, pending) {
+  const last = heldLines[heldLines.length - 1];
+  if (last && last.who === who && last.pending) {
+    last.text = text;
+    last.pending = pending;
+    return;
+  }
+  heldLines.push({ who, text, pending });
+}
+
+function showHeldLines() {
+  const queued = heldLines.splice(0, heldLines.length);
+  for (const item of queued) {
+    paintLine(item.who, item.text, item.pending);
+  }
+}
+
+function clearTranscript() {
+  heldLines.splice(0, heldLines.length);
+  transcript.replaceChildren();
+  empty.hidden = false;
+}
+
+function line(who, text, pending) {
+  if (!callReady) {
+    holdLine(who, text, pending);
+    return;
+  }
+  paintLine(who, text, pending);
 }
 
 function statusBody(message) {
@@ -77,9 +109,13 @@ function onAppMessage(event) {
       setStatus(text);
     }
     if (body.call_is_ready === true) {
+      const wasReady = callReady;
       callReady = true;
       setPercent(100);
       setLoading(false);
+      if (!wasReady) {
+        showHeldLines();
+      }
       if (app.classList.contains("is-connecting")) {
         setStatus("Connected");
         setPhase("connected");
@@ -150,6 +186,7 @@ async function startCall() {
   startButton.disabled = true;
   endButton.disabled = true;
   callReady = false;
+  clearTranscript();
   setPhase("connecting");
   showBanner("");
   setLoading(true);

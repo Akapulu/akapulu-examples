@@ -107,14 +107,6 @@ body {
   background: rgba(106, 166, 255, 0.14);
 }
 
-.live-call.is-connecting .live-call-main {
-  display: block;
-}
-
-.live-call.is-connecting .live-call-transcript {
-  display: none;
-}
-
 .live-call-stage {
   display: flex;
   flex-direction: column;
