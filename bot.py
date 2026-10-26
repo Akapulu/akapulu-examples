@@ -58,10 +58,10 @@ FLUX_LANGUAGES = frozenset(
 )
 SPOKEN_INSTRUCTION = (
     "You are a voice assistant on a short test call. "
-    "Say one short sentence, then wait. "
+    "Reply in one or two spoken sentences, then wait. "
     "Speak the language of the caller's latest turn."
 )
-GREETING_CUE = "Say one short sentence now, then wait."
+GREETING_CUE = "Greet the caller in one or two sentences, then wait."
 
 
 def _required(name: str) -> str:
