@@ -47,8 +47,9 @@ def test_api_origin_override():
 def test_speaks_first():
     from bot import GREETING_CUE, SPOKEN_INSTRUCTION
 
-    assert "Reply in one or two spoken sentences, then wait." in SPOKEN_INSTRUCTION
-    assert GREETING_CUE == "Greet the caller in one or two sentences, then wait."
+    assert "Reply in one or two spoken sentences." in SPOKEN_INSTRUCTION
+    assert "wait" not in SPOKEN_INSTRUCTION.lower()
+    assert GREETING_CUE == "Greet the caller in one or two sentences."
 
 
 def test_microphone_subscriptions():
