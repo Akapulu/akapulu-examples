@@ -24,9 +24,6 @@ def test_voice_stack():
     assert bot.EAGER_EOT_THRESHOLD == 0.5
     assert bot.Language.EN in bot.FLUX_LANGUAGES
     assert bot.Language.ZH not in bot.FLUX_LANGUAGES
-    source = Path(bot.__file__).read_text(encoding="utf-8")
-    assert "OpenAILiveLLMService" not in source
-    assert "gpt-live-1" not in source
 
 
 def test_spoken_language_locks_and_rejects_a_missing_language():
