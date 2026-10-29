@@ -46,14 +46,21 @@ def test_spoken_language_locks_and_rejects_a_missing_language():
     assert processor.pushed == []
 
     processor = Recording()
-    turn = TranscriptionFrame(
+    english = TranscriptionFrame(
         "hello", "browser", "2026-10-25T00:00:00Z", Language.EN, finalized=True
     )
-    asyncio.run(processor.process_frame(turn, FrameDirection.DOWNSTREAM))
-    assert processor.pushed[0][0].delta.language_hints == [Language.EN]
+    asyncio.run(processor.process_frame(english, FrameDirection.DOWNSTREAM))
+    assert processor.pushed == [(english, FrameDirection.DOWNSTREAM)]
+
+    processor.pushed.clear()
+    switched = TranscriptionFrame(
+        "hello", "browser", "2026-10-25T00:00:00Z", Language.JA, finalized=True
+    )
+    asyncio.run(processor.process_frame(switched, FrameDirection.DOWNSTREAM))
     assert isinstance(processor.pushed[0][0], STTUpdateSettingsFrame)
+    assert processor.pushed[0][0].delta.language_hints == [Language.JA]
     assert isinstance(processor.pushed[1][0], TTSUpdateSettingsFrame)
-    assert processor.pushed[1][0].delta.language == Language.EN
+    assert processor.pushed[1][0].delta.language == Language.JA
 
 
 if __name__ == "__main__":
