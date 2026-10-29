@@ -52,19 +52,22 @@ def test_speaks_first():
     assert GREETING_CUE == "Greet the caller in one or two sentences."
 
 
-def test_microphone_subscriptions():
-    from bot import microphone_subscriptions
+def test_avatar_microphone_off():
+    from bot import avatar_microphone_off
 
-    settings = microphone_subscriptions(
-        {
-            "local": {"info": {"isLocal": True, "userName": "Assistant"}},
-            "browser": {"info": {"userName": "You"}},
-            "avatar": {"info": {"userName": "Avatar"}},
-        }
-    )
-    assert settings["browser"]["media"]["microphone"] == "subscribed"
-    assert settings["avatar"]["media"]["microphone"] == "unsubscribed"
-    assert "local" not in settings
+    assert avatar_microphone_off({"id": "browser", "info": {"userName": "You"}}) is None
+    assert avatar_microphone_off(
+        {"id": "local", "info": {"isLocal": True, "userName": "Assistant"}}
+    ) is None
+    assert avatar_microphone_off({"id": "avatar", "info": {"userName": "Avatar"}}) == {
+        "avatar": {"media": {"microphone": "unsubscribed"}}
+    }
+    try:
+        avatar_microphone_off({"info": {"userName": "Avatar"}})
+    except RuntimeError as exc:
+        assert "id" in str(exc)
+    else:
+        raise AssertionError("avatar without an id was accepted")
 
 
 if __name__ == "__main__":
@@ -72,7 +75,7 @@ if __name__ == "__main__":
     test_api_origin_override()
     try:
         test_speaks_first()
-        test_microphone_subscriptions()
+        test_avatar_microphone_off()
     except ImportError as exc:
         print(f"bot import skipped: {exc}")
     print("ok")
