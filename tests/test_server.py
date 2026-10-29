@@ -22,7 +22,7 @@ async def _run() -> None:
         page = await client.get("/")
         assert page.status == 200
         html = await page.text()
-        assert "Akapulu" in html
+        assert "Akapulu Labs call" in html
         script = await client.get("/static/app.js")
         assert script.status == 200
         started = await client.post("/session", json={})
