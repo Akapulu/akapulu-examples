@@ -16,7 +16,7 @@ One process (`server.py`) serves the page and starts the call.
 
 The worker starts the face only after a short stretch of assistant audio has arrived. Speech-to-speech models often reach that first audio quickly, then trickle, so the buffer fills slowly. A streaming TTS keeps the audio coming after the first chunk, which fills the buffer sooner. Cartesia has been the best mix we have tried: a low time to first audio, and audio that keeps arriving quickly enough to fill that buffer.
 
-Deepgram Flux (`flux-general-multi`) hears the caller and takes the turn. OpenAI `gpt-5.4-mini` speaks, with reasoning off. Cartesia Sonic 3.6 speaks each finished sentence, with the buffer delay at 0, using the Ariana voice `ec1e269e-9ca0-402f-8a18-58e0e022355a`. The first committed turn locks that language on Flux and on Sonic. The bot listens only to the browser microphone. When the browser joins, the bot speaks first in one or two sentences. The transcript pane stays up, and the words stay out of it until the avatar is ready.
+Deepgram Flux (`flux-general-multi`) hears the caller and takes the turn. OpenAI `gpt-5.4-mini` speaks, with reasoning off. Cartesia Sonic 3.6 speaks each finished sentence, with the buffer delay at 0, using the Ariana voice `ec1e269e-9ca0-402f-8a18-58e0e022355a`. The call starts in English. A later committed turn in another language switches Flux and Sonic. The bot listens only to the browser microphone. When the browser joins, the bot speaks first in one or two sentences. The transcript pane stays up, and the words stay out of it until the avatar is ready.
 
 Tested with Pipecat 1.14.0 and `pipecat-akapulu` 0.1.6.
 
