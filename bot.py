@@ -2,7 +2,8 @@
 
 Deepgram Flux hears the caller. gpt-5.4-mini speaks. Cartesia Sonic 3.6
 speaks each finished sentence. The Akapulu worker publishes the face and
-the played audio. This bot listens only to the browser participant named You.
+the played audio. When the participant named Avatar joins, this bot turns
+that microphone off. The browser stays subscribed to it.
 """
 
 import asyncio
@@ -14,7 +15,6 @@ from pipecat.frames.frames import (
     STTUpdateSettingsFrame,
     TranscriptionFrame,
     TTSUpdateSettingsFrame,
-    UserAudioRawFrame,
 )
 from pipecat.pipeline.pipeline import Pipeline
 from pipecat.pipeline.worker import PipelineParams, PipelineWorker
@@ -81,42 +81,14 @@ def _daily_user_name(participant: dict) -> str:
     return name
 
 
-def microphone_subscriptions(participants: dict) -> dict:
-    """Subscribe the browser mic. Unsubscribe every other participant, including the avatar."""
-    settings = {}
-    for participant_id, participant in participants.items():
-        if not isinstance(participant, dict):
-            raise RuntimeError("Daily participant is not an object")
-        info = participant.get("info")
-        if isinstance(info, dict) and info.get("isLocal") is True:
-            continue
-        name = _daily_user_name(participant)
-        settings[participant_id] = {
-            "media": {
-                "microphone": "subscribed" if name == USER_NAME else "unsubscribed",
-            }
-        }
-    return settings
-
-
-class BrowserMic(FrameProcessor):
-    """Pass only the browser microphone into the model."""
-
-    def __init__(self):
-        super().__init__()
-        self._browser_id: str | None = None
-
-    def allow(self, participant_id: str) -> None:
-        if self._browser_id is not None and self._browser_id != participant_id:
-            raise RuntimeError("Daily browser microphone changed")
-        self._browser_id = participant_id
-
-    async def process_frame(self, frame, direction: FrameDirection):
-        await super().process_frame(frame, direction)
-        if isinstance(frame, UserAudioRawFrame):
-            if self._browser_id is None or frame.user_id != self._browser_id:
-                return
-        await self.push_frame(frame, direction)
+def avatar_microphone_off(participant: dict) -> dict | None:
+    """The one Daily subscription change. None for every participant except Avatar."""
+    if _daily_user_name(participant) != AVATAR_NAME:
+        return None
+    participant_id = participant.get("id")
+    if not isinstance(participant_id, str) or not participant_id:
+        raise RuntimeError("Daily participant has no id")
+    return {participant_id: {"media": {"microphone": "unsubscribed"}}}
 
 
 class SpokenLanguage(FrameProcessor):
@@ -174,12 +146,10 @@ async def run_bot(room_url: str, token: str, session_id: str) -> None:
         "Assistant",
         DailyParams(
             audio_in_enabled=True,
-            audio_in_user_tracks=True,
             audio_out_enabled=False,
             video_out_enabled=False,
         ),
     )
-    browser_mic = BrowserMic()
     stt = DeepgramFluxSTTService(
         api_key=_required("DEEPGRAM_API_KEY"),
         enable_eager_end_of_turn=True,
@@ -218,7 +188,6 @@ async def run_bot(room_url: str, token: str, session_id: str) -> None:
     pipeline = Pipeline(
         [
             transport.input(),
-            browser_mic,
             stt,
             spoken_language,
             user_aggregator,
@@ -241,35 +210,25 @@ async def run_bot(room_url: str, token: str, session_id: str) -> None:
     await runner.add_workers(worker)
 
     joined = asyncio.Event()
-    seen: set[str] = set()
 
-    async def enforce_microphone_subscriptions() -> None:
-        settings = microphone_subscriptions(dict(transport.participants()))
-        if not settings:
-            return
-        error = await transport.update_subscriptions(participant_settings=settings)
-        if error:
-            raise RuntimeError(f"Daily microphone subscription failed: {error}")
+    @transport.event_handler("on_joined")
+    async def on_joined(_transport, _data):
+        logger.info("Voice bot joined Daily")
 
-    async def note_participant(participant) -> None:
+    @transport.event_handler("on_participant_joined")
+    async def on_participant_joined(_transport, participant):
         if not isinstance(participant, dict):
             raise RuntimeError("Daily participant is not an object")
         info = participant.get("info")
         if isinstance(info, dict) and info.get("isLocal") is True:
             return
-        participant_id = participant.get("id")
-        if not isinstance(participant_id, str) or not participant_id:
-            raise RuntimeError("Daily participant has no id")
-        if participant_id in seen:
-            await enforce_microphone_subscriptions()
-            return
-        seen.add(participant_id)
         name = _daily_user_name(participant)
         logger.info("Daily participant joined {}", name)
-        if name == USER_NAME:
-            browser_mic.allow(participant_id)
-        await enforce_microphone_subscriptions()
-        if name == AVATAR_NAME:
+        settings = avatar_microphone_off(participant)
+        if settings is not None:
+            error = await transport.update_subscriptions(participant_settings=settings)
+            if error:
+                raise RuntimeError(f"Daily avatar microphone unsubscribe failed: {error}")
             return
         if name != USER_NAME:
             raise RuntimeError(f"Daily participant {name} is not the browser or the avatar")
@@ -277,19 +236,6 @@ async def run_bot(room_url: str, token: str, session_id: str) -> None:
             raise RuntimeError("Daily browser joined twice")
         joined.set()
         await worker.queue_frames([LLMRunFrame()])
-
-    @transport.event_handler("on_joined")
-    async def on_joined(_transport, _data):
-        for participant in dict(transport.participants()).values():
-            await note_participant(participant)
-
-    @transport.event_handler("on_participant_joined")
-    async def on_participant_joined(_transport, participant):
-        await note_participant(participant)
-
-    @transport.event_handler("on_participant_updated")
-    async def on_participant_updated(_transport, _participant):
-        await enforce_microphone_subscriptions()
 
     @transport.event_handler("on_client_disconnected")
     async def on_client_disconnected(_transport, participant):
