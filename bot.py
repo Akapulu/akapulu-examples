@@ -37,8 +37,8 @@ SETUP_TIMEOUT_SECS = 180.0
 USER_JOIN_TIMEOUT_SECS = 180.0
 SPEAKER_MODEL = "gpt-5.4-mini"
 SONIC_MODEL = "sonic-3.6"
-# Ariana, Kind Friend. Same voice as the Akapulu Labs hosted bot.
-SONIC_VOICE_ID = "ec1e269e-9ca0-402f-8a18-58e0e022355a"
+# Carson, Curious Conversationalist. Male Sonic voice for Hollis.
+SONIC_VOICE_ID = "86e30c1d-714b-4074-a1f2-1cb6b552fb49"
 FLUX_MODEL = "flux-general-multi"
 EAGER_EOT_THRESHOLD = 0.5
 # Codes flux-general-multi returns, and the only codes this bot will lock.

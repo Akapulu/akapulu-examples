@@ -19,7 +19,7 @@ import bot
 def test_voice_stack():
     assert bot.SPEAKER_MODEL == "gpt-5.4-mini"
     assert bot.SONIC_MODEL == "sonic-3.6"
-    assert bot.SONIC_VOICE_ID == "ec1e269e-9ca0-402f-8a18-58e0e022355a"
+    assert bot.SONIC_VOICE_ID == "86e30c1d-714b-4074-a1f2-1cb6b552fb49"
     assert bot.FLUX_MODEL == "flux-general-multi"
     assert bot.EAGER_EOT_THRESHOLD == 0.5
     assert bot.Language.EN in bot.FLUX_LANGUAGES
