@@ -24,8 +24,7 @@ from pipecat.transports.daily.utils import (
 ROOM_TTL_SECS = 2 * 60 * 60
 USER_NAME = "You"
 AVATAR_NAME = "Avatar"
-# Default: Hollis (public catalog). Every public catalog avatar is enabled.
-# This is AI off.
+# Hollis (public catalog). This is AI off.
 AVATAR_ID = "1285bfe4-3512-4b34-93ad-196098597a1c"
 SHOW_AI_LABEL = False
 AKAPULU_API_ORIGIN = "https://akapulu.com"
