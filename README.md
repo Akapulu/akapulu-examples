@@ -36,7 +36,7 @@ Copy `.env.example` to `.env` and set:
 - `DEEPGRAM_API_KEY`
 - `CARTESIA_API_KEY`
 
-The example defaults to Hollis and leaves **This is AI** off. Every public catalog avatar is enabled; change `AVATAR_ID` in `session.py` to use another. The example calls the Akapulu Labs production API.
+The example uses Hollis, leaves **This is AI** off, and calls the Akapulu Labs production API.
 
 ```bash
 python server.py
