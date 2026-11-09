@@ -10,15 +10,15 @@ One process (`server.py`) serves the page and starts the call.
 2. Click **Start call**. The browser `POST`s `/session`.
 3. The server creates a private Daily room, mints three meeting tokens, and `POST`s `/api/live-sessions/` (starts the Akapulu Labs worker).
 4. The server starts the voice bot in the background and returns the browser token to the page.
-5. The page joins Daily. The voice bot joins Daily (listens only; no camera or mic out). The Akapulu Labs worker joins and publishes the face and the played audio.
+5. The page joins Daily. The voice bot joins Daily (listens only; no camera or mic out). The Akapulu Labs worker joins and publishes the avatar video and audio.
 
 `AkapuluAvatar` runs inside the voice bot and sends assistant audio to the worker.
 
-The worker starts the face only after a short stretch of assistant audio has arrived. Speech-to-speech models often reach that first audio quickly, then trickle, so the buffer fills slowly. A streaming TTS keeps the audio coming after the first chunk, which fills the buffer sooner. Cartesia has been the best mix we have tried: a low time to first audio, and audio that keeps arriving quickly enough to fill that buffer.
+The avatar worker needs about 800 ms of assistant audio before it starts rendering the video. The render itself, given the audio, only takes around 150ms. You might see added latency in your bot's response even if your TTS provider's TTFA is low, due to this buffer accumulation. A TTS that trickles audio in slowly fills that buffer late, so the response is slower and the avatar gestures less. We recommend a TTS that sends audio in waves. Cartesia has been the best in our testing.
 
 Deepgram Flux (`flux-general-multi`) hears the caller and takes the turn. OpenAI `gpt-5.4-mini` speaks, with reasoning off. Cartesia Sonic 3.6 speaks each finished sentence, with the buffer delay at 0, using the Carson male voice `86e30c1d-714b-4074-a1f2-1cb6b552fb49`. The call starts in English. A later committed turn in another language switches Flux and Sonic. When the participant named Avatar joins, the bot turns that microphone off. The browser stays subscribed to it. When the browser joins, the bot speaks first in one or two sentences. The transcript pane stays up, and the words stay out of it until the avatar is ready.
 
-Tested with Pipecat 1.14.0 and `pipecat-akapulu` 0.1.12.
+Tested with Pipecat 1.14.0 and `pipecat-akapulu` 0.1.14.
 
 ## Run
 
