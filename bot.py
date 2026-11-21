@@ -2,8 +2,9 @@
 
 Deepgram Flux hears the caller. gpt-5.4-mini speaks. Cartesia Sonic 3.6
 speaks each finished sentence. The Akapulu worker publishes the face and
-the played audio. When the participant named Avatar joins, this bot turns
-that microphone off. The browser stays subscribed to it.
+the played audio. Call avatar.attach(transport) and await
+wait_until_call_ready before greeting. The browser stays subscribed to
+the Avatar microphone.
 """
 
 import asyncio
@@ -26,9 +27,9 @@ from pipecat.services.deepgram.flux.stt import DeepgramFluxSTTService
 from pipecat.services.openai.responses.llm import OpenAIResponsesLLMService
 from pipecat.services.tts_service import TextAggregationMode
 from pipecat.transcriptions.language import Language
-from pipecat.transports.daily.transport import DailyParams, DailyTransport
+from pipecat.transports.daily.transport import DailyTransport
 from pipecat.workers.runner import WorkerRunner
-from pipecat_akapulu import AkapuluAvatar
+from pipecat_akapulu import AkapuluAvatar, akapulu_daily_params
 
 from session import AVATAR_NAME, USER_NAME
 
@@ -79,16 +80,6 @@ def _daily_user_name(participant: dict) -> str:
     if not isinstance(name, str) or not name:
         raise RuntimeError("Daily participant has no userName")
     return name
-
-
-def avatar_microphone_off(participant: dict) -> dict | None:
-    """The one Daily subscription change. None for every participant except Avatar."""
-    if _daily_user_name(participant) != AVATAR_NAME:
-        return None
-    participant_id = participant.get("id")
-    if not isinstance(participant_id, str) or not participant_id:
-        raise RuntimeError("Daily participant has no id")
-    return {participant_id: {"media": {"microphone": "unsubscribed"}}}
 
 
 class SpokenLanguage(FrameProcessor):
@@ -144,11 +135,7 @@ async def run_bot(room_url: str, token: str, session_id: str) -> None:
         room_url,
         token,
         "Assistant",
-        DailyParams(
-            audio_in_enabled=True,
-            audio_out_enabled=False,
-            video_out_enabled=False,
-        ),
+        akapulu_daily_params(audio_in_user_tracks=True),
     )
     stt = DeepgramFluxSTTService(
         api_key=_required("DEEPGRAM_API_KEY"),
@@ -183,6 +170,7 @@ async def run_bot(room_url: str, token: str, session_id: str) -> None:
         ),
     )
     avatar = AkapuluAvatar(session_id=session_id)
+    avatar.attach(transport)
     context = LLMContext([{"role": "developer", "content": GREETING_CUE}])
     user_aggregator, assistant_aggregator = LLMContextAggregatorPair(context)
     pipeline = Pipeline(
@@ -215,6 +203,10 @@ async def run_bot(room_url: str, token: str, session_id: str) -> None:
     async def on_joined(_transport, _data):
         logger.info("Voice bot joined Daily")
 
+    async def greet_when_ready() -> None:
+        await avatar.wait_until_call_ready(timeout=SETUP_TIMEOUT_SECS)
+        await worker.queue_frames([LLMRunFrame()])
+
     @transport.event_handler("on_participant_joined")
     async def on_participant_joined(_transport, participant):
         if not isinstance(participant, dict):
@@ -224,18 +216,14 @@ async def run_bot(room_url: str, token: str, session_id: str) -> None:
             return
         name = _daily_user_name(participant)
         logger.info("Daily participant joined {}", name)
-        settings = avatar_microphone_off(participant)
-        if settings is not None:
-            error = await transport.update_subscriptions(participant_settings=settings)
-            if error:
-                raise RuntimeError(f"Daily avatar microphone unsubscribe failed: {error}")
+        if name == AVATAR_NAME:
             return
         if name != USER_NAME:
             raise RuntimeError(f"Daily participant {name} is not the browser or the avatar")
         if joined.is_set():
             raise RuntimeError("Daily browser joined twice")
         joined.set()
-        await worker.queue_frames([LLMRunFrame()])
+        asyncio.create_task(greet_when_ready())
 
     @transport.event_handler("on_client_disconnected")
     async def on_client_disconnected(_transport, participant):
