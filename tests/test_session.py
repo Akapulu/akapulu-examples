@@ -52,22 +52,17 @@ def test_speaks_first():
     assert GREETING_CUE == "Greet the caller in one or two sentences."
 
 
-def test_avatar_microphone_off():
-    from bot import avatar_microphone_off
+def test_bot_uses_attach():
+    from pathlib import Path
 
-    assert avatar_microphone_off({"id": "browser", "info": {"userName": "You"}}) is None
-    assert avatar_microphone_off(
-        {"id": "local", "info": {"isLocal": True, "userName": "Assistant"}}
-    ) is None
-    assert avatar_microphone_off({"id": "avatar", "info": {"userName": "Avatar"}}) == {
-        "avatar": {"media": {"microphone": "unsubscribed"}}
-    }
-    try:
-        avatar_microphone_off({"info": {"userName": "Avatar"}})
-    except RuntimeError as exc:
-        assert "id" in str(exc)
-    else:
-        raise AssertionError("avatar without an id was accepted")
+    bot_src = Path(__file__).resolve().parents[1] / "bot.py"
+    text = bot_src.read_text()
+    if "avatar.attach(transport)" not in text:
+        raise RuntimeError("bot.py missing avatar.attach(transport)")
+    if "wait_until_call_ready" not in text:
+        raise RuntimeError("bot.py missing wait_until_call_ready")
+    if "avatar_microphone_off" in text:
+        raise RuntimeError("bot.py still has avatar_microphone_off")
 
 
 if __name__ == "__main__":
@@ -75,7 +70,7 @@ if __name__ == "__main__":
     test_api_origin_override()
     try:
         test_speaks_first()
-        test_avatar_microphone_off()
+        test_bot_uses_attach()
     except ImportError as exc:
         print(f"bot import skipped: {exc}")
     print("ok")
