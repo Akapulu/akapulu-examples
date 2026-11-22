@@ -1,8 +1,11 @@
 # akapulu-examples
 
-Local Akapulu Labs example: a small Python server, a browser page, and a voice bot with [pipecat-akapulu](https://github.com/Akapulu/pipecat-akapulu).
+Local Akapulu Labs examples:
 
-## How it works
+- **Pipecat / Daily** (this directory): `server.py` on `http://127.0.0.1:7860` with [pipecat-akapulu](https://github.com/Akapulu/pipecat-akapulu).
+- **LiveKit** ([`livekit/`](livekit/)): `livekit/server.py` on `http://127.0.0.1:7861` with [livekit-akapulu](https://github.com/Akapulu/livekit-akapulu). Browser join (no Agent Console login).
+
+## How it works (Pipecat / Daily)
 
 One process (`server.py`) serves the page and starts the call.
 
