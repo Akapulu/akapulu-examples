@@ -52,30 +52,52 @@ function setBotSpeaking(on) {
 }
 
 function paintLine(who, text, pending) {
+  // LiveKit Agents send one text stream per interim/final segment. Update the
+  // open same-who bubble, skip an identical already-final bubble, else append.
+  const cleaned = (text || "").trim();
+  if (!cleaned) {
+    return;
+  }
   empty.hidden = true;
   const last = transcript.lastElementChild;
   if (last && last.dataset.who === who && last.dataset.pending === "true") {
-    last.textContent = text;
+    last.textContent = cleaned;
     last.dataset.pending = pending ? "true" : "false";
+    transcript.scrollTop = transcript.scrollHeight;
+    return;
+  }
+  if (
+    last &&
+    last.dataset.who === who &&
+    last.dataset.pending === "false" &&
+    last.textContent === cleaned
+  ) {
     return;
   }
   const item = document.createElement("li");
   item.dataset.who = who;
   item.dataset.pending = pending ? "true" : "false";
   item.className = who === "You" ? "is-user" : "is-bot";
-  item.textContent = text;
+  item.textContent = cleaned;
   transcript.append(item);
   transcript.scrollTop = transcript.scrollHeight;
 }
 
 function holdLine(who, text, pending) {
+  const cleaned = (text || "").trim();
+  if (!cleaned) {
+    return;
+  }
   const last = heldLines[heldLines.length - 1];
   if (last && last.who === who && last.pending) {
-    last.text = text;
+    last.text = cleaned;
     last.pending = pending;
     return;
   }
-  heldLines.push({ who, text, pending });
+  if (last && last.who === who && !last.pending && last.text === cleaned) {
+    return;
+  }
+  heldLines.push({ who, text: cleaned, pending });
 }
 
 function showHeldLines() {
