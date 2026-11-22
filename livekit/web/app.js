@@ -260,8 +260,9 @@ async function startCall() {
         line(who, text, true);
       }
     }
-    // Interim streams stay pending; only the final stream closes the bubble.
-    line(who, text, !final);
+    // Close the bubble when this stream ends. Contiguous same-who upsert
+    // (paintLine) absorbs a later interim/final race without a second row.
+    line(who, text, false);
   });
   room.on(RoomEvent.TrackSubscribed, (track, _pub, participant) => {
     if (participant.identity !== AVATAR_IDENTITY) {
