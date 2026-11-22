@@ -52,26 +52,18 @@ function setBotSpeaking(on) {
 }
 
 function paintLine(who, text, pending) {
-  // LiveKit Agents send one text stream per interim/final segment. Update the
-  // open same-who bubble, skip an identical already-final bubble, else append.
+  // LiveKit Agents race interim/final text streams. Keep one bubble per
+  // contiguous speaker turn: if the last line is the same who, update it.
   const cleaned = (text || "").trim();
   if (!cleaned) {
     return;
   }
   empty.hidden = true;
   const last = transcript.lastElementChild;
-  if (last && last.dataset.who === who && last.dataset.pending === "true") {
+  if (last && last.dataset.who === who) {
     last.textContent = cleaned;
     last.dataset.pending = pending ? "true" : "false";
     transcript.scrollTop = transcript.scrollHeight;
-    return;
-  }
-  if (
-    last &&
-    last.dataset.who === who &&
-    last.dataset.pending === "false" &&
-    last.textContent === cleaned
-  ) {
     return;
   }
   const item = document.createElement("li");
@@ -89,12 +81,9 @@ function holdLine(who, text, pending) {
     return;
   }
   const last = heldLines[heldLines.length - 1];
-  if (last && last.who === who && last.pending) {
+  if (last && last.who === who) {
     last.text = cleaned;
     last.pending = pending;
-    return;
-  }
-  if (last && last.who === who && !last.pending && last.text === cleaned) {
     return;
   }
   heldLines.push({ who, text: cleaned, pending });
@@ -271,7 +260,8 @@ async function startCall() {
         line(who, text, true);
       }
     }
-    line(who, text, false);
+    // Interim streams stay pending; only the final stream closes the bubble.
+    line(who, text, !final);
   });
   room.on(RoomEvent.TrackSubscribed, (track, _pub, participant) => {
     if (participant.identity !== AVATAR_IDENTITY) {
