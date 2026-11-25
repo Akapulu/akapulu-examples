@@ -30,7 +30,7 @@ Copy `.env.example` to `.env` and set:
 - `LIVEKIT_URL`, `LIVEKIT_API_KEY`, `LIVEKIT_API_SECRET` (LiveKit Cloud project with Inference enabled)
 - `AKAPULU_API_KEY`
 
-The example uses Hollis, leaves **This is AI** off, and calls the Akapulu Labs production API. Override with `AKAPULU_API_URL` only for harnesses.
+The example uses Hollis, leaves **This is AI** off, and calls the Akapulu Labs production API.
 
 ```bash
 python server.py
