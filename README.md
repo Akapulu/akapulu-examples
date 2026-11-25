@@ -3,27 +3,11 @@
 Local Akapulu Labs examples:
 
 - **Pipecat / Daily** (this directory): `server.py` on `http://127.0.0.1:7860` with [pipecat-akapulu](https://github.com/Akapulu/pipecat-akapulu).
-- **LiveKit** ([`livekit/`](livekit/)): `livekit/server.py` on `http://127.0.0.1:7861` with [livekit-akapulu](https://github.com/Akapulu/livekit-akapulu). Browser join (no Agent Console login).
+- **LiveKit** ([`livekit/`](livekit/)): `livekit/server.py` on `http://127.0.0.1:7861` with [livekit-akapulu](https://github.com/Akapulu/livekit-akapulu). Browser join (no Agent Console login). Follow that folder’s README.
 
-## How it works (Pipecat / Daily)
+The rest of this page is the Pipecat / Daily example.
 
-One process (`server.py`) serves the page and starts the call.
-
-1. Open the page at `http://127.0.0.1:7860`.
-2. Click **Start call**. The browser `POST`s `/session`.
-3. The server creates a private Daily room, mints three meeting tokens, and `POST`s `/api/live-sessions/` (starts the Akapulu Labs worker).
-4. The server starts the voice bot in the background and returns the browser token to the page.
-5. The page joins Daily. The voice bot joins Daily (listens only; no camera or mic out). The Akapulu Labs worker joins and publishes the avatar video and audio.
-
-`AkapuluAvatar` runs inside the voice bot and sends assistant audio to the worker.
-
-The avatar worker needs about 800 ms of assistant audio before it starts rendering the video. The render itself, given the audio, only takes around 150ms. You might see added latency in your bot's response even if your TTS provider's TTFA is low, due to this buffer accumulation. A TTS that trickles audio in slowly fills that buffer late, so the response is slower and the avatar gestures less. We recommend a TTS that sends audio in waves. Cartesia has been the best in our testing.
-
-Deepgram Flux (`flux-general-multi`) hears the caller and takes the turn. OpenAI `gpt-5.4-mini` speaks, with reasoning off. Cartesia Sonic 3.6 speaks each finished sentence, with the buffer delay at 0, using the Carson male voice `86e30c1d-714b-4074-a1f2-1cb6b552fb49`. The call starts in English. A later committed turn in another language switches Flux and Sonic. The bot calls `avatar.attach(transport)` and greets after `wait_until_call_ready`. The browser stays subscribed to the Avatar microphone. The transcript pane stays up, and the words stay out of it until the avatar is ready.
-
-Tested with Pipecat 1.14.0, 1.15.0, and 1.16.0 and `pipecat-akapulu` 0.1.20.
-
-## Run
+## Run the Pipecat / Daily example
 
 ```bash
 python -m venv .venv
@@ -45,11 +29,49 @@ The example uses Hollis, leaves **This is AI** off, and calls the Akapulu Labs p
 python server.py
 ```
 
-Open http://127.0.0.1:7860 and choose **Start call**. The server handles one call at a time. A second start while a call is running returns an error.
+1. Open http://127.0.0.1:7860
+2. Click **Start call**
+3. Wait for the avatar (face + greeting). The worker needs a few seconds to load.
+
+The server handles one call at a time. A second start while a call is running returns an error.
 
 `AKAPULU_API_KEY` stays in the Python process. The page only receives the Daily room URL and the browser meeting token.
 
-## Layout
+## How the call starts
+
+One process (`server.py`) serves the page and starts the call.
+
+1. The browser `POST`s `/session`.
+2. The server creates a private Daily room, mints three meeting tokens, and `POST`s `/api/live-sessions/` (starts the Akapulu Labs worker).
+3. The server starts the voice bot in the background and returns the browser token to the page.
+4. The page joins Daily. The voice bot joins Daily (listens only; no camera or mic out). The Akapulu Labs worker joins and publishes the avatar video and audio.
+
+`AkapuluAvatar` runs inside the voice bot and sends assistant audio to the worker. The bot calls `avatar.attach(transport)` and greets after `wait_until_call_ready`. The browser stays subscribed to the Avatar microphone. The transcript pane stays up; words stay out of it until the avatar is ready.
+
+## Notes
+
+### Avatar audio buffer
+
+The avatar worker needs about **800 ms** of assistant audio before it starts rendering video. The render itself, given that audio, is around **150 ms**. So you can see added latency even when TTS time-to-first-audio is low: the worker is filling that buffer first.
+
+A TTS that trickles audio in slowly fills the buffer late, so the response feels slower and the avatar gestures less. Prefer a TTS that sends audio in waves. Cartesia has been the best in our testing.
+
+### Cartesia `max_buffer_delay_ms`
+
+This example sets Cartesia Sonic’s `max_buffer_delay_ms=0`.
+
+Cartesia can hold text briefly and flush a larger TTS request. That internal wait stacks on top of sentence aggregation and the avatar’s 800 ms buffer. Delay `0` turns that hold off so each finished sentence goes to Sonic immediately as one clip.
+
+### Stack
+
+- Deepgram Flux (`flux-general-multi`) hears the caller and takes the turn.
+- OpenAI `gpt-5.4-mini` speaks, with reasoning off.
+- Cartesia Sonic 3.6 speaks each finished sentence (Carson male voice `86e30c1d-714b-4074-a1f2-1cb6b552fb49`).
+- The call starts in English. A later committed turn in another language switches Flux and Sonic.
+
+Tested with Pipecat 1.14.0, 1.15.0, and 1.16.0 and `pipecat-akapulu` 0.1.22.
+
+### Layout
 
 - `server.py`: local HTTP app (`GET /`, `POST /session`)
 - `session.py`: Daily room + tokens + Akapulu Labs live-session
