@@ -54,12 +54,6 @@ The avatar worker needs about **800 ms** of assistant audio before it starts ren
 
 A TTS that trickles audio in slowly fills the buffer late, so the response feels slower and the avatar gestures less. Prefer a TTS that sends audio in waves. Cartesia has been the best in our testing.
 
-### Cartesia `max_buffer_delay_ms`
-
-This example sets Cartesia Sonic’s `max_buffer_delay_ms=0`.
-
-Cartesia can hold text briefly and flush a larger TTS request. That internal wait stacks on top of sentence aggregation and the avatar’s 800 ms buffer. Delay `0` turns that hold off so each finished sentence goes to Sonic immediately as one clip.
-
 ### Stack
 
 - Deepgram Flux (`flux-general-multi`) hears the caller and takes the turn.
