@@ -34,7 +34,7 @@ The example uses Hollis, leaves **This is AI** off, and calls the Akapulu Labs p
 python server.py
 ```
 
-Open http://127.0.0.1:7861 and choose **Start Call**. One call at a time.
+Open http://127.0.0.1:7861 and choose **Start Call**.
 
 ## Layout
 

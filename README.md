@@ -33,8 +33,6 @@ python server.py
 2. Click **Start call**
 3. Wait for the avatar (face + greeting). The worker needs a few seconds to load.
 
-The server handles one call at a time. A second start while a call is running returns an error.
-
 `AKAPULU_API_KEY` stays in the Python process. The page only receives the Daily room URL and the browser meeting token.
 
 ## How the call starts
