@@ -37,6 +37,14 @@ One process (`server.py`) serves the page and starts the call on `127.0.0.1:7861
 
 `AvatarSession` runs inside the voice bot and sends assistant audio to the worker. STT stays muted until `wait_until_call_ready`.
 
+## Notes
+
+### Avatar audio buffer
+
+The avatar worker needs about **800 ms** of assistant audio before it starts rendering video. The render itself, given that audio, is around **150 ms**. So you can see added latency even when TTS time-to-first-audio is low: the worker is filling that buffer first.
+
+A TTS that trickles audio in slowly fills the buffer late, so the response feels slower and the avatar gestures less. Prefer a TTS that sends audio in waves.
+
 ## Layout
 
 - `server.py`: local HTTP app (`GET /`, `POST /session`)
