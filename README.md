@@ -61,8 +61,6 @@ A TTS that trickles audio in slowly fills the buffer late, so the response feels
 - Cartesia Sonic 3.6 speaks each finished sentence (Carson male voice `86e30c1d-714b-4074-a1f2-1cb6b552fb49`).
 - The call starts in English. A later committed turn in another language switches Flux and Sonic.
 
-Tested with Pipecat 1.14.0, 1.15.0, and 1.16.0 and `pipecat-akapulu` 0.1.22.
-
 ### Layout
 
 - `server.py`: local HTTP app (`GET /`, `POST /session`)
