@@ -2,18 +2,6 @@
 
 Local Akapulu Labs example on LiveKit: a small Python server, a browser page, and a LiveKit Agents voice bot with [livekit-akapulu](https://github.com/Akapulu/livekit-akapulu).
 
-## How it works
-
-One process (`server.py`) serves the page and starts the call on `127.0.0.1:7861`.
-
-1. Open the page at `http://127.0.0.1:7861`.
-2. Click **Start call**. The browser `POST`s `/session`.
-3. The server calls `create_akapulu_livekit_call` (LiveKit room + tokens + `POST /api/live-sessions/`).
-4. The server starts the voice bot in the background and returns the browser token.
-5. The page joins LiveKit. The voice bot joins (Inference STT / LLM / TTS). The Akapulu Labs worker joins as `Avatar` and publishes the face and played audio.
-
-`AvatarSession` runs inside the voice bot and sends assistant audio to the worker. STT stays muted until `wait_until_call_ready`.
-
 ## Run
 
 ```bash
@@ -34,7 +22,20 @@ The example uses Hollis, leaves **This is AI** off, and calls the Akapulu Labs p
 python server.py
 ```
 
-Open http://127.0.0.1:7861 and choose **Start Call**.
+1. Open http://127.0.0.1:7861
+2. Click **Start Call**
+3. Wait for the avatar (face + greeting). The worker needs a few seconds to load.
+
+## How the call starts
+
+One process (`server.py`) serves the page and starts the call on `127.0.0.1:7861`.
+
+1. The browser `POST`s `/session`.
+2. The server calls `create_akapulu_livekit_call` (LiveKit room + tokens + `POST /api/live-sessions/`).
+3. The server starts the voice bot in the background and returns the browser token.
+4. The page joins LiveKit. The voice bot joins (Inference STT / LLM / TTS). The Akapulu Labs worker joins as `Avatar` and publishes the face and played audio.
+
+`AvatarSession` runs inside the voice bot and sends assistant audio to the worker. STT stays muted until `wait_until_call_ready`.
 
 ## Layout
 
