@@ -3,7 +3,7 @@
 Local Akapulu Labs examples:
 
 - **Pipecat / Daily** (this directory): `server.py` on `http://127.0.0.1:7860` with [pipecat-akapulu](https://github.com/Akapulu/pipecat-akapulu).
-- **LiveKit** ([`livekit/`](livekit/)): `livekit/server.py` on `http://127.0.0.1:7861` with [livekit-akapulu](https://github.com/Akapulu/livekit-akapulu). Browser join (no Agent Console login). Follow that folder’s README.
+- **LiveKit** ([`livekit/`](livekit/)): `livekit/server.py` on `http://127.0.0.1:7861` with [livekit-akapulu](https://github.com/Akapulu/livekit-akapulu). Follow that folder’s README.
 
 The rest of this page is the Pipecat / Daily example.
 

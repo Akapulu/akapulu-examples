@@ -2,8 +2,6 @@
 
 Local Akapulu Labs example on LiveKit: a small Python server, a browser page, and a LiveKit Agents voice bot with [livekit-akapulu](https://github.com/Akapulu/livekit-akapulu).
 
-This is the browser path. The package also ships an Agent Console worker under `examples/console_agent` in that repo; Console needs a LiveKit Cloud login, so this folder is what you open in Chromium.
-
 ## How it works
 
 One process (`server.py`) serves the page and starts the call on `127.0.0.1:7861`.
